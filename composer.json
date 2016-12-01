@@ -1,0 +1,17 @@
+{
+    "name": "uiii/pw-test",
+    "description": "Testing tool for ProcessWire CMF",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Richard Jedlička",
+            "email": "jedlicka.r@gmail.com"
+        }
+    ],
+    "bin": [
+        "bin/pw-test"
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
