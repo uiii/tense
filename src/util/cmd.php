@@ -1,16 +1,5 @@
 <?php
 
-class Path {
-	public static function isAbsolute($path) {
-		return (bool) preg_match("#([a-z]:)?[/\\\\]#Ai", $path);
-	}
-
-	public static function join(/* $paths */) {
-		$paths = func_get_args();
-		return implode(DIRECTORY_SEPARATOR, $paths);
-	}
-}
-
 class CmdException extends \Exception {
 	public function __construct($result) {
 		parent::__construct(implode("\n", $result->output));
@@ -34,8 +23,11 @@ class Cmd {
 		$output = null;
 		$exitCode = 0;
 
-		//var_dump(sprintf("%s %s 2>&1", $command, implode(' ', $args)));
-		exec(sprintf("%s %s 2>&1", $command, implode(' ', $args)), $output, $exitCode);
+		$commandString = sprintf("%s %s 2>&1", $command, implode(' ', $args));
+		
+		Log::debug(sprintf("Running command: %s", $commandString));
+
+		exec($commandString, $output, $exitCode);
 
 		$result = new \stdClass;
 		$result->exitCode = $exitCode;

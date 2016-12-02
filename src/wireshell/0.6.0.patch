@@ -1,0 +1,75 @@
+diff --git a/src/Commands/Common/NewCommand.php b/src/Commands/Common/NewCommand.php
+index 08e409f..3856d41 100644
+--- a/src/Commands/Common/NewCommand.php
++++ b/src/Commands/Common/NewCommand.php
+@@ -82,7 +82,7 @@ class NewCommand extends Command
+             ->setDescription('Creates a new ProcessWire project')
+             ->addArgument('directory', InputArgument::OPTIONAL, 'Directory where the new project will be created')
+             ->addOption('dbUser', null, InputOption::VALUE_REQUIRED, 'Database user')
+-            ->addOption('dbPass', null, InputOption::VALUE_REQUIRED, 'Database password')
++            ->addOption('dbPass', null, InputOption::VALUE_OPTIONAL, 'Database password')
+             ->addOption('dbName', null, InputOption::VALUE_REQUIRED, 'Database name')
+             ->addOption('dbHost', null, InputOption::VALUE_REQUIRED, 'Database host, default: `localhost`')
+             ->addOption('dbPort', null, InputOption::VALUE_REQUIRED, 'Database port, default: `3306`')
+@@ -100,6 +100,7 @@ class NewCommand extends Command
+             ->addOption('dev', null, InputOption::VALUE_NONE, 'Download dev branch')
+             ->addOption('devns', null, InputOption::VALUE_NONE, 'Download devns branch (dev with namespace support)')
+             ->addOption('sha', null, InputOption::VALUE_REQUIRED, 'Download specific commit')
++            ->addOption('src', null, InputOption::VALUE_REQUIRED, 'Path to pre-downloaded zip')
+             ->addOption('no-install', null, InputOption::VALUE_NONE, 'Disable installation')
+             ->addOption('v', null, InputOption::VALUE_NONE, 'verbose');
+     }
+@@ -132,13 +133,21 @@ class NewCommand extends Command
+ 
+         $profile = $input->getOption('profile');
+         $branch = $this->getZipURL($input);
++
++        $src = $input->getOption('src');
+ 
+         try {
+-            $this
+-                ->checkProjectName()
+-                ->download($branch)
+-                ->extract()
+-                ->cleanUp();
++            $this->checkProjectName();
++
++            if ($src) {
++                mkdir($this->projectDir, 0777, true);
++                $this->compressedFilePath = $this->fs->isAbsolutePath($src) ? $src : getcwd() . DIRECTORY_SEPARATOR . $src;
++            } else {
++                $this->download($branch);
++            }
++
++            $this->extract();
++            $this->cleanUp();
+         } catch (Exception $e) {
+         }
+ 
+@@ -180,7 +189,7 @@ class NewCommand extends Command
+                 $post['dbUser'] = $dbUser;
+ 
+                 $dbPass = $input->getOption('dbPass');
+-                if (!$dbPass) {
++                if (! $input->hasParameterOption('--dbPass')) {
+                     $question = new Question('Please enter the database password : ', null);
+                     $question->setHidden(true);
+                     $question->setHiddenFallback(false);
+@@ -499,7 +508,7 @@ class NewCommand extends Command
+      */
+     private function cleanUp()
+     {
+-        $this->fs->remove(dirname($this->compressedFilePath));
++        //$this->fs->remove(dirname($this->compressedFilePath));
+ 
+         try {
+             $licenseFile = array($this->projectDir . '/LICENSE');
+@@ -530,7 +539,7 @@ class NewCommand extends Command
+      */
+     private function cleanUpInstallation()
+     {
+-        $this->fs->remove(dirname($this->compressedFilePath));
++        //$this->fs->remove(dirname($this->compressedFilePath));
+ 
+         try {
+             $siteDirs = glob($this->projectDir . '/site-*');

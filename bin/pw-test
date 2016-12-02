@@ -2,4 +2,13 @@
 
 <?php
 
-require __DIR__ . '/../src/pw-test.php';
+require __DIR__ . '/../src/util/log.php';
+require __DIR__ . '/../src/util/path.php';
+require __DIR__ . '/../src/test_runner.php';
+
+Log::$level = 3;
+
+$configFile = Path::join(getcwd(), 'pw-test.json');
+
+$testRunner = new TestRunner($configFile);
+$testRunner->run();
