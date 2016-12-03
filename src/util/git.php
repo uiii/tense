@@ -8,11 +8,11 @@ class Git {
 	}
 	
 	public static function checkout($repoPath, $target) {
-		Cmd::run("git checkout -f", [$target], $repoPath);
+		Cmd::run("git checkout -f", [$target], ['cwd' => $repoPath]);
 	}
 
 	public static function apply($repoPath, $patchPath) {
-		Cmd::run("git apply", [$patchPath], $repoPath);
+		Cmd::run("git apply", [$patchPath], ['cwd' => $repoPath]);
 	}
 
 	public static function getTags($repo) {
@@ -21,7 +21,7 @@ class Git {
 		$result = Cmd::run("git ls-remote --tags --refs $repoUrl");
 
 		$tags = [];
-
+		
 		foreach (array_reverse($result->output) as $line) {
 			list($sha, $ref) = explode("\t", $line);
 

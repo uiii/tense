@@ -24,8 +24,8 @@ class Log {
 		self::write(3, $message);
 	}
 
-	public static function debug($message) {
-		self::write(4, $message, "[DEBUG]");
+	public static function debug($message, $debugLevel = 0) {
+		self::write(4 + $debugLevel, $message, "[DEBUG]");
 	}	
 	
 	protected static function write($minLevel, $message, $prefix = "") {
@@ -37,6 +37,6 @@ class Log {
 			$prefix .= " ";
 		}
 
-		echo sprintf("%s%s\n", $prefix, $message);
+		echo sprintf("%s%s" . PHP_EOL, $prefix, $message);
 	}
 }

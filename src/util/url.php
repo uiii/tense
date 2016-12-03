@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/log.php';
+
 class Url {
 	public static function get($url, $outputFile = null) {
 		Log::debug(sprintf("Downloading URL: %s", $url));

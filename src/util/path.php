@@ -8,24 +8,28 @@ class Path {
 	}
 
 	public static function join(/* $paths */) {
-		$paths = array_map(function ($path) { 
-			return trim($path, "\\/"); 
-		}, func_get_args());
-
-		return implode(DIRECTORY_SEPARATOR, $paths);
+		return array_reduce(func_get_args(), function ($output, $path) {
+			$path = rtrim($path, "\\/");
+			
+			if (self::isAbsolute($path) || ! $output) {
+				return $path;
+			}
+			
+			return $output . DIRECTORY_SEPARATOR . $path;
+		}, "");
 	}
 	
 	public static function copy($source, $destination) {
 		if (is_file($source)) {
-			Log::debug(sprintf("Copy file: %s", $source));
-			Log::debug(sprintf("To file:   %s", $destination));
+			Log::debug(sprintf("Copy file: %s", $source), 1);
+			Log::debug(sprintf("To file:   %s", $destination), 1);
 
 			copy($source, $destination);
 
 			return;
 		}
 		
-		Log::debug(sprintf("Create directory: %s", $destination));
+		Log::debug(sprintf("Create directory: %s", $destination), 1);
 		mkdir($destination, 0777, true);
 
 		$directoryIterator = new \RecursiveDirectoryIterator(
@@ -38,15 +42,15 @@ class Path {
 			if ($item->isDir()) {
 				$directoryPath = self::join($destination, $recursiveIterator->getSubPathName());
 
-				Log::debug(sprintf("Create directory: %s", $directoryPath));
+				Log::debug(sprintf("Create directory: %s", $directoryPath), 1);
 				
 				mkdir($directoryPath, 0777);
 			} else {
 				$sourceFilePath = $item->getPathname();
 				$destinationFilePath = self::join($destination, $recursiveIterator->getSubPathName());
 
-				Log::debug(sprintf("Copy file: %s", $sourceFilePath));
-				Log::debug(sprintf("To file:   %s", $destinationFilePath));
+				Log::debug(sprintf("Copy file: %s", $sourceFilePath), 1);
+				Log::debug(sprintf("To file:   %s", $destinationFilePath), 1);
 
 				copy($sourceFilePath, $destinationFilePath);
 			}
@@ -55,7 +59,7 @@ class Path {
 
 	public static function remove($path) {
 		if (is_file($path)) {
-			Log::debug(sprintf("Remove file: %s", $path));
+			Log::debug(sprintf("Remove file: %s", $path), 1);
 
 			unlink($path);
 
@@ -72,17 +76,17 @@ class Path {
 			$itemPath = $item->getPathname();
 
 			if ($item->isDir()) {
-				Log::debug(sprintf("Remove directory: %s", $itemPath));
+				Log::debug(sprintf("Remove directory: %s", $itemPath), 1);
 				
 				rmdir($itemPath);
 			} else {
-				Log::debug(sprintf("Remove file: %s", $itemPath));
+				Log::debug(sprintf("Remove file: %s", $itemPath), 1);
 
 				unlink($itemPath);
 			}
 		}
 
-		Log::debug(sprintf("Remove directory: %s", $path));
+		Log::debug(sprintf("Remove directory: %s", $path), 1);
 		rmdir($path);
 	}
 }

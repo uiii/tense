@@ -25,7 +25,7 @@ class Database {
 		$result = Cmd::run("mysql", $mysqlArgs);
 
 		if ($result->exitCode !== 0) {
-			throw new DatabaseException(implode("\n", $result->output));
+			throw new DatabaseException(implode(PHP_EOL, $result->output));
 		}
 	}
 }

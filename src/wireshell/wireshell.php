@@ -105,7 +105,7 @@ class Wireshell {
 		}
 
 		// install dependencies (runs always because might fail during installation)
-		Cmd::run("composer install", [], $installPath);
+		Cmd::run("composer install", [], ['cwd' => $installPath]);
 		
 		// return path to wireshell executable
 		return Path::join($installPath, "wireshell");

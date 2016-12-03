@@ -9,13 +9,15 @@ class TestRunner
 	protected $installer;
 
 	public function __construct($configFile) {
+		Log::info("Initializing ...");
+
 		$this->config = $this->loadConfig($configFile);
 		$this->installer = new Installer($this->config);
 	}
 
 	public function run() {
 		foreach($this->config->testTags as $tagName) {
-			$this->runTests($tagName);
+			$this->testProcessWire($tagName);
 		}
 	}
 
@@ -34,12 +36,14 @@ class TestRunner
 			// make the tmpDir relative to the directory where the config file is stored
 			$config->tmpDir = Path::join(dirname($configFile), $config->tmpDir);
 		}
+		
+		// TODO validation
 
 		return $config;
 	}
 
-	protected function runTests($tagName) {
-		Log::info("\n::Testing agains PW $tagName");
+	protected function testProcessWire($tagName) {
+		Log::info(PHP_EOL . "::: Testing agains PW $tagName :::" . PHP_EOL);
 		
 		$processWirePath = null;
 
@@ -47,7 +51,7 @@ class TestRunner
 			$processWirePath = $this->installer->installProcessWire($tagName);
 			$this->copySourceFiles($processWirePath);
 			
-			// TODO run tests
+			$this->runTests($processWirePath);
 		} catch (\Exception $e) {
 			Log::error($e->getMessage());
 		} finally {
@@ -64,6 +68,29 @@ class TestRunner
 				);
 			}
 		}
+	}
+	
+	protected function runTests($processWirePath) {
+		Log::info("Running tests ..." . PHP_EOL);
+		
+		list($cmdExecutable, $args) = preg_split("/\s+/", $this->config->testCmd . " ", 2);
+		
+		if (strpbrk($cmdExecutable, "/\\") !== false) {
+			// cmd executable is a path, so make it absolute
+			$cmdExecutable = Path::join(dirname($this->config->_file), $cmdExecutable);
+		}
+		
+		$env = [
+			"PW_PATH" => $processWirePath
+		];
+
+		$result = Cmd::run($cmdExecutable, preg_split("/\s+/", $args), [
+			'env' => $env, 
+			'throw_on_error' => false,
+			'print_output' => true
+		]);
+		
+		Log::info(PHP_EOL);
 	}
 }
 
