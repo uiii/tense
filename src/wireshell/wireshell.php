@@ -8,15 +8,15 @@ require_once __DIR__ . '/../util/cmd.php';
 
 class Wireshell {
 	public static $githubUrl = "https://github.com/wireshell/wireshell";
-	
+
 	protected static $wireshellVersions = [
 		"develop" => ["supportsPW" => ["/^3/"]],
-		"0.6.0" => [ 
-			"supportsPW" => ["/^2.[4-7](\..*)?$/"], 
-			// 0.6.0 version needs to be patched 
+		"0.6.0" => [
+			"supportsPW" => ["/^2.[4-7](\..*)?$/"],
+			// 0.6.0 version needs to be patched
 			// to be able to install from pre-downloaded zip
 			// and to accept empty db password
-			"needsPatch" => "0.6.0.patch" 
+			"needsPatch" => "0.6.0.patch"
 		]
 	];
 
@@ -27,11 +27,11 @@ class Wireshell {
 		$this->config = $config;
 	}
 
-	public function installProcessWire($tag) {
+	public function installProcessWire($tag, $installPath) {
 		$version = $this->getRequiredVersion($tag->name);
 
 		if (! $version) {
-			throw new \Exception("Wireshell (needed for ProcessWire installation) doesn't support version $tag->name.");
+			throw new \RuntimeException("Wireshell (needed for ProcessWire installation) doesn't support version $tag->name.");
 		}
 
 		// install required wireshell version if not installed
@@ -42,8 +42,6 @@ class Wireshell {
 
 		// install PW
 		Log::info("Installing ProcessWire $tag->name ...");
-
-		$installPath = Path::join($this->config->tmpDir, "pw-{$tag->name}");
 
 		$wireshellArgs = [
 			"new",
@@ -65,10 +63,10 @@ class Wireshell {
 		];
 
 		Cmd::run("php $wireshellPath", $wireshellArgs);
-		
+
 		return $installPath;
 	}
-	
+
 	protected function downloadProcessWire($tag) {
 		$zipPath = Path::join($this->config->tmpDir, "pw-{$tag->name}.zip");
 
@@ -77,7 +75,7 @@ class Wireshell {
 
 			Url::get($tag->zip, $zipPath);
 		}
-		
+
 		return $zipPath;
 	}
 
@@ -94,7 +92,7 @@ class Wireshell {
 
 			// switch to required version
 			Git::checkout($installPath, $version);
-			
+
 			// apply patch if needed
 			$versionInfo = self::$wireshellVersions[$version];
 			$needsPatch = array_key_exists("needsPatch", $versionInfo) ? $versionInfo["needsPatch"] : null;
@@ -106,7 +104,7 @@ class Wireshell {
 
 		// install dependencies (runs always because might fail during installation)
 		Cmd::run("composer install", [], ['cwd' => $installPath]);
-		
+
 		// return path to wireshell executable
 		return Path::join($installPath, "wireshell");
 	}

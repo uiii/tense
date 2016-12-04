@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/cmd.php';
 
-class DatabaseException extends \Exception {
+class DatabaseException extends \RuntimeException {
 	public function __construct($message) {
 		parent::__construct($message);
 	}

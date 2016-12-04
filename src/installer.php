@@ -17,49 +17,67 @@ class Installer {
 
 	protected $config;
 
+	protected $shouldCleanUpFiles;
+	protected $shouldcleanUpDatabase;
+
 	public function __construct($config) {
 		$this->config = $config;
 		$this->wireshell = new Wireshell($config);
-		
+
 		$this->initPWTags();
 	}
 
 	public function installProcessWire($tagName) {
+		$this->shouldCleanUpFiles = false;
+		$this->shouldCleanUpDatabase = false;
+
 		$availableTag = $this->getLatestAvailableMatchingTag($tagName);
 
 		if (! $availableTag) {
-			throw new \Exception("No matching ProcessWire tag to '$tagName' found");
+			throw new \RuntimeException("No matching ProcessWire tag to '$tagName' found");
 		}
 
 		Log::info("Using latest matching ProcessWire version: {$availableTag->name}");
-		
+
 		$this->createDatabase();
-		$installPath = $this->wireshell->installProcessWire($availableTag);
-		
+
+		$installPath = Path::join($this->config->tmpDir, "pw");
+
+		if (file_exists($installPath)) {
+			throw new \RuntimeException(sprintf("ProcessWire install path already exists: %s", $installPath));
+		}
+
+		$this->shouldCleanUpFiles = true;
+
+		$this->wireshell->installProcessWire($availableTag, $installPath);
+
 		return $installPath;
 	}
-	
+
 	public function uninstallProcessWire($processWirePath) {
-		if (file_exists($processWirePath)) {
+		if ($this->shouldCleanUpFiles && file_exists($processWirePath)) {
 			Path::remove($processWirePath);
 		}
-		
-		$this->dropDatabase();
+
+		if ($this->shouldCleanUpDatabase) {
+			$this->dropDatabase();
+		}
 	}
 
 	protected function createDatabase() {
 		try {
 			Database::query($this->config->db, "create database {$this->config->db->name}");
+			$this->shouldCleanUpDatabase = true;
 		} catch (DatabaseException $e) {
-			throw new \Exception("Cannot create database: %s", $e->getMessage());
+			throw new \RuntimeException("Cannot create database: %s", $e->getMessage());
 		}
 	}
-	
+
 	protected function dropDatabase() {
 		try {
 			Database::query($this->config->db, "drop database if exists {$this->config->db->name}");
 		} catch (DatabaseException $e) {
-			throw new \Exception("Cannot drop database: %s", $e->getMessage());
+			throw new \RuntimeException("Cannot drop database: %s", $e->getMessage());
 		}
 	}
 
@@ -82,7 +100,7 @@ class Installer {
 		}
 
 		/*var_dump(array_map(
-			function ($tag) { return $tag->name . " : " . $tag->sha; }, 
+			function ($tag) { return $tag->name . " : " . $tag->sha; },
 			$this->availableTags
 		));*/
 	}
