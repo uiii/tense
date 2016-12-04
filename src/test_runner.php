@@ -6,6 +6,10 @@ require_once __DIR__ . '/installer.php';
 
 class TestRunner
 {
+	const ACTION_CONTINUE = "Continue";
+	const ACTION_STOP = "Stop";
+	const ACTION_REPEAT = "Repeat";
+
 	protected $installer;
 
 	public function __construct($configFile) {
@@ -17,7 +21,15 @@ class TestRunner
 
 	public function run() {
 		foreach($this->config->testTags as $tagName) {
-			$this->testProcessWire($tagName);
+			$nextAction = $this->testProcessWire($tagName);
+
+			while ($nextAction === self::ACTION_REPEAT) {
+				$nextAction = $this->testProcessWire($tagName);
+			}
+
+			if ($nextAction === self::ACTION_STOP) {
+				break;
+			}
 		}
 	}
 
@@ -28,7 +40,7 @@ class TestRunner
 		}
 
 		$config = json_decode(file_get_contents($configFile));
-		
+
 		$config->_file = $configFile;
 
 		// absolutize tmpDir
@@ -36,29 +48,36 @@ class TestRunner
 			// make the tmpDir relative to the directory where the config file is stored
 			$config->tmpDir = Path::join(dirname($configFile), $config->tmpDir);
 		}
-		
+
 		// TODO validation
 
 		return $config;
 	}
 
 	protected function testProcessWire($tagName) {
-		Log::info(PHP_EOL . "::: Testing agains PW $tagName :::" . PHP_EOL);
-		
+		Log::info(PHP_EOL . "::: Testing against ProcessWire $tagName :::" . PHP_EOL);
+
 		$processWirePath = null;
+		$action = null;
 
 		try {
 			$processWirePath = $this->installer->installProcessWire($tagName);
 			$this->copySourceFiles($processWirePath);
-			
-			$this->runTests($processWirePath);
+
+			$result = $this->runTests($processWirePath);
+
+			$action = $this->askForAction($result, $processWirePath);
 		} catch (\Exception $e) {
 			Log::error($e->getMessage());
 		} finally {
+			Log::info(sprintf("Clean up & %s", $action));
+
 			$this->installer->uninstallProcessWire($processWirePath);
 		}
+
+		return $action;
 	}
-	
+
 	protected function copySourceFiles($processWirePath) {
 		foreach ($this->config->copySources as $destination => $sources) {
 			foreach($sources as $source) {
@@ -69,36 +88,88 @@ class TestRunner
 			}
 		}
 	}
-	
+
 	protected function runTests($processWirePath) {
 		Log::info("Running tests ..." . PHP_EOL);
-		
+
 		list($cmdExecutable, $args) = preg_split("/\s+/", $this->config->testCmd . " ", 2);
-		
+
 		if (strpbrk($cmdExecutable, "/\\") !== false) {
 			// cmd executable is a path, so make it absolute
 			$cmdExecutable = Path::join(dirname($this->config->_file), $cmdExecutable);
 		}
-		
+
 		$env = [
 			"PW_PATH" => $processWirePath
 		];
 
 		$result = Cmd::run($cmdExecutable, preg_split("/\s+/", $args), [
-			'env' => $env, 
+			'env' => $env,
 			'throw_on_error' => false,
 			'print_output' => true
 		]);
-		
+
 		Log::info(PHP_EOL);
+
+		return $result;
+	}
+
+	protected function askForAction($result, $processWirePath) {
+		$success = $result->exitCode === 0;
+		$waitAfterTests = $this->config->waitAfterTests;
+
+		$neverWait = $waitAfterTests === "never";
+		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $success;
+
+		if ($neverWait || $waitOnFailureButSuccess) {
+			return self::ACTION_CONTINUE;
+		}
+
+		Log::info("Test runner is now halted [waitAfterTests = '$waitAfterTests']");
+		Log::info("Tested ProcessWire instance is installed in '$processWirePath'");
+
+		$options = [
+			self::ACTION_CONTINUE => "Yes",
+			self::ACTION_STOP => "No"
+		];
+
+		$defaultAction = self::ACTION_CONTINUE;
+
+		if (! $success) {
+			$options[self::ACTION_REPEAT] = "Repeat";
+			$defaultAction = self::ACTION_REPEAT;
+		}
+
+		$selectedAction = null;
+
+		while (! $selectedAction) {
+			echo sprintf(
+				"Do you want to continue? %s (default is [%s]): ",
+				implode("  ", array_map(function ($option) {
+					return preg_replace("/^./", "[$0]", $option);
+				}, $options)),
+				$options[$defaultAction][0]
+			);
+
+			$input = trim(fgets(STDIN));
+
+			if (! $input) {
+				return $defaultAction;
+			}
+
+			foreach ($options as $action => $option) {
+				if (stripos($option, $input) === 0) {
+					$selectedAction = $action;
+				}
+			}
+
+			if (! $selectedAction) {
+				Log::error(sprintf("unknown option: %s" . PHP_EOL, $input));
+			}
+		}
+
+		echo PHP_EOL;
+
+		return $selectedAction;
 	}
 }
-
-/*PHPUNIT_CMD="${CWD}/../vendor/bin/phpunit"
-
-test_pw() {
-	install_params="$@"
-
-	install_pw ${install_params} && ${PHPUNIT_CMD}
-	uninstall_pw
-}*/

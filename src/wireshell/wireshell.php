@@ -31,7 +31,7 @@ class Wireshell {
 		$version = $this->getRequiredVersion($tag->name);
 
 		if (! $version) {
-			throw new \Exception("Wireshell (needed for PW installation) doesn't support version $tag->name.");
+			throw new \Exception("Wireshell (needed for ProcessWire installation) doesn't support version $tag->name.");
 		}
 
 		// install required wireshell version if not installed
@@ -41,9 +41,9 @@ class Wireshell {
 		$pwZipPath = $this->downloadProcessWire($tag);
 
 		// install PW
-		Log::info("Installing PW $tag->name ...");
+		Log::info("Installing ProcessWire $tag->name ...");
 
-		$installPath = Path::join($this->config->tmpDir, "pw-{$tag->sha}");
+		$installPath = Path::join($this->config->tmpDir, "pw-{$tag->name}");
 
 		$wireshellArgs = [
 			"new",
@@ -70,10 +70,10 @@ class Wireshell {
 	}
 	
 	protected function downloadProcessWire($tag) {
-		$zipPath = Path::join($this->config->tmpDir, "pw-{$tag->sha}.zip");
+		$zipPath = Path::join($this->config->tmpDir, "pw-{$tag->name}.zip");
 
 		if (! file_exists($zipPath)) {
-			Log::info("Downloading PW $tag->name ...");
+			Log::info("Downloading ProcessWire $tag->name ...");
 
 			Url::get($tag->zip, $zipPath);
 		}

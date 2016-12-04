@@ -10,4 +10,16 @@
 	},
 
 	"testTags": ["2.5", "2.6", "2.7", "3.0"]
+		
+	"copySources": {
+		"path/to/destination": [
+			"source",
+			"anotherSource"
+		]
+	},
+	
+	"testCmd": "vendor/bin/tester",
+	
+	// possible values are 'never', 'onFailure', 'always'
+	"waitAfterTests": "never"
 }

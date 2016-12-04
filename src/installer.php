@@ -28,10 +28,10 @@ class Installer {
 		$availableTag = $this->getLatestAvailableMatchingTag($tagName);
 
 		if (! $availableTag) {
-			throw new \Exception("No matching PW tag to '$tagName' found");
+			throw new \Exception("No matching ProcessWire tag to '$tagName' found");
 		}
 
-		Log::info("Using latest matching PW version: {$availableTag->name}");
+		Log::info("Using latest matching ProcessWire version: {$availableTag->name}");
 		
 		$this->createDatabase();
 		$installPath = $this->wireshell->installProcessWire($availableTag);
@@ -40,8 +40,6 @@ class Installer {
 	}
 	
 	public function uninstallProcessWire($processWirePath) {
-		Log::info("Clean up");
-		
 		if (file_exists($processWirePath)) {
 			Path::remove($processWirePath);
 		}
