@@ -58,22 +58,22 @@ class TestRunner
 		Log::info(PHP_EOL . "::: Testing against ProcessWire $tagName :::" . PHP_EOL);
 
 		$processWirePath = null;
-		$action = null;
+		$testSuccess = false;
 
 		try {
 			$processWirePath = $this->installer->installProcessWire($tagName);
 			$this->copySourceFiles($processWirePath);
 
-			$result = $this->runTests($processWirePath);
-
-			$action = $this->askForAction($result, $processWirePath);
+			$testSuccess = $this->runTests($processWirePath);
 		} catch (\Exception $e) {
-			Log::error($e->getMessage());
-		} finally {
-			Log::info(sprintf("Clean up & %s", $action));
-
-			$this->installer->uninstallProcessWire($processWirePath);
+			Log::error($e->getMessage() . PHP_EOL);
 		}
+
+		$action = $this->askForAction($testSuccess, $processWirePath);
+
+		Log::info(sprintf("Clean up & %s", $action));
+
+		$this->installer->uninstallProcessWire($processWirePath);
 
 		return $action;
 	}
@@ -111,22 +111,33 @@ class TestRunner
 
 		Log::info(PHP_EOL);
 
-		return $result;
+		$success = $result->exitCode === 0;
+
+		if (! $success) {
+			Log::info("Tests failed" . PHP_EOL);
+		}
+
+		return $success;
 	}
 
-	protected function askForAction($result, $processWirePath) {
-		$success = $result->exitCode === 0;
+	protected function askForAction($testSuccess, $processWirePath) {
 		$waitAfterTests = $this->config->waitAfterTests;
 
 		$neverWait = $waitAfterTests === "never";
-		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $success;
+		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $testSuccess;
 
 		if ($neverWait || $waitOnFailureButSuccess) {
 			return self::ACTION_CONTINUE;
 		}
 
-		Log::info("Test runner is now halted [waitAfterTests = '$waitAfterTests']");
-		Log::info("Tested ProcessWire instance is installed in '$processWirePath'");
+		Log::info(sprintf(
+			"Test runner is now halted (configured to wait after %s tests, see 'waitAfterTests' option)",
+			$waitAfterTests === "always" ? "all" : "failed"
+		));
+
+		if ($processWirePath) {
+			Log::info("Tested ProcessWire instance is installed in '$processWirePath'");
+		}
 
 		$options = [
 			self::ACTION_CONTINUE => "Yes",
@@ -135,9 +146,9 @@ class TestRunner
 
 		$defaultAction = self::ACTION_CONTINUE;
 
-		if (! $success) {
+		if (! $testSuccess) {
 			$options[self::ACTION_REPEAT] = "Repeat";
-			$defaultAction = self::ACTION_REPEAT;
+			$defaultAction = self::ACTION_STOP;
 		}
 
 		$selectedAction = null;
@@ -154,7 +165,8 @@ class TestRunner
 			$input = trim(fgets(STDIN));
 
 			if (! $input) {
-				return $defaultAction;
+				$selectedAction = $defaultAction;
+				break;
 			}
 
 			foreach ($options as $action => $option) {
@@ -164,7 +176,7 @@ class TestRunner
 			}
 
 			if (! $selectedAction) {
-				Log::error(sprintf("unknown option: %s" . PHP_EOL, $input));
+				Log::error(sprintf("Unknown option: %s" . PHP_EOL, $input));
 			}
 		}
 
