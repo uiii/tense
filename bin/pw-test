@@ -2,6 +2,8 @@
 
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
 require __DIR__ . '/../src/util/log.php';
 require __DIR__ . '/../src/util/path.php';
 require __DIR__ . '/../src/test_runner.php';

@@ -12,7 +12,9 @@
         "bin/pw-test"
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "justinrainbow/json-schema": "^4.0",
+        "t1st3/php-json-minify": "^0.6.2"
     },
     "require-dev": {
         "nette/tester": "^1.7"

@@ -4,9 +4,121 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "55ac24ae58a13c4446e0ad18887c9b15",
-    "content-hash": "f052c947e323c902a305839b7f003c18",
-    "packages": [],
+    "hash": "75e97813ff3a576769ed0ffec9c8082c",
+    "content-hash": "984359d267c33cd4a66af1c4ad088b6f",
+    "packages": [
+        {
+            "name": "justinrainbow/json-schema",
+            "version": "4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/justinrainbow/json-schema.git",
+                "reference": "10d1f6977f6be5f177dded8f585a11debdc27591"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/10d1f6977f6be5f177dded8f585a11debdc27591",
+                "reference": "10d1f6977f6be5f177dded8f585a11debdc27591",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "json-schema/json-schema-test-suite": "1.2.0",
+                "phpdocumentor/phpdocumentor": "~2",
+                "phpunit/phpunit": "^4.8.22"
+            },
+            "bin": [
+                "bin/validate-json"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JsonSchema\\": "src/JsonSchema/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bruno Prieto Reis",
+                    "email": "bruno.p.reis@gmail.com"
+                },
+                {
+                    "name": "Justin Rainbow",
+                    "email": "justin.rainbow@gmail.com"
+                },
+                {
+                    "name": "Igor Wiedler",
+                    "email": "igor@wiedler.ch"
+                },
+                {
+                    "name": "Robert Schönthal",
+                    "email": "seroscho@googlemail.com"
+                }
+            ],
+            "description": "A library to validate a json schema.",
+            "homepage": "https://github.com/justinrainbow/json-schema",
+            "keywords": [
+                "json",
+                "schema"
+            ],
+            "time": "2016-11-09 16:32:33"
+        },
+        {
+            "name": "t1st3/php-json-minify",
+            "version": "0.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/t1st3/php-json-minify.git",
+                "reference": "f48327a253632128139a1d0a728d6fcb517f6f25"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/t1st3/php-json-minify/zipball/f48327a253632128139a1d0a728d6fcb517f6f25",
+                "reference": "f48327a253632128139a1d0a728d6fcb517f6f25",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "2.*",
+                "phpunit/phpunit": "5.*",
+                "sebastian/phpcpd": "2.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "t1st3\\": "src/t1st3/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "t1st3",
+                    "homepage": "https://github.com/t1st3",
+                    "role": "Developer"
+                }
+            ],
+            "homepage": "https://github.com/t1st3/php-json-minify",
+            "keywords": [
+                "php"
+            ],
+            "time": "2016-08-03 14:17:41"
+        }
+    ],
     "packages-dev": [
         {
             "name": "nette/tester",

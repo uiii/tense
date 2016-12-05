@@ -4,6 +4,8 @@ require_once __DIR__ . '/util/log.php';
 require_once __DIR__ . '/util/path.php';
 require_once __DIR__ . '/installer.php';
 
+use t1st3\JSONMin\JSONMin;
+
 class TestRunner
 {
 	const ACTION_CONTINUE = "Continue";
@@ -39,17 +41,37 @@ class TestRunner
 			die();
 		}
 
-		$config = json_decode(file_get_contents($configFile));
+		$defaultConfigFile = Path::join(__DIR__, '../conf/pw-test.json');
+		$defaultConfig = json_decode(JSONMin::minify(file_get_contents($defaultConfigFile)), true);
+		$config = json_decode(JSONMin::minify(file_get_contents($configFile)), true);
+
+		$config = json_decode(json_encode(array_replace_recursive($defaultConfig, $config)));
+
+		$validator = new JsonSchema\Validator;
+		$validator->check($config, (object)['$ref' => 'file://' . Path::join(__DIR__, '../conf/schema.json')]);
+
+		if (! $validator->isValid()) {
+			$errorMessages = [];
+			foreach ($validator->getErrors() as $error) {
+				array_push($errorMessages, sprintf("%s: %s", $error['property'], $error['message']));
+			}
+
+			Log::error(sprintf(
+				"Configuration file contains errors:%s%s",
+				PHP_EOL,
+				implode(PHP_EOL, $errorMessages)
+			));
+
+			die();
+		}
 
 		$config->_file = $configFile;
 
 		// absolutize tmpDir
 		if (! Path::isAbsolute($config->tmpDir)) {
 			// make the tmpDir relative to the directory where the config file is stored
-			$config->tmpDir = Path::join(dirname($configFile), $config->tmpDir);
+			$config->tmpDir = Path::join(dirname($configFile), trim($config->tmpDir));
 		}
-
-		// TODO validation
 
 		return $config;
 	}
@@ -80,10 +102,19 @@ class TestRunner
 
 	protected function copySourceFiles($processWirePath) {
 		foreach ($this->config->copySources as $destination => $sources) {
-			foreach($sources as $source) {
+			if (is_array($sources)) {
+				foreach($sources as $source) {
+					$source = trim($source);
+
+					Path::copy(
+						Path::join(dirname($this->config->_file), $source),
+						Path::join($processWirePath, trim($destination), basename($source))
+					);
+				}
+			} else {
 				Path::copy(
-					Path::join(dirname($this->config->_file), $source),
-					Path::join($processWirePath, $destination, basename($source))
+					Path::join(dirname($this->config->_file), trim($sources)),
+					Path::join($processWirePath, $destination)
 				);
 			}
 		}
@@ -92,7 +123,7 @@ class TestRunner
 	protected function runTests($processWirePath) {
 		Log::info("Running tests ..." . PHP_EOL);
 
-		list($cmdExecutable, $args) = preg_split("/\s+/", $this->config->testCmd . " ", 2);
+		list($cmdExecutable, $args) = preg_split("/\s+/", trim($this->config->testCmd) . " ", 2);
 
 		if (strpbrk($cmdExecutable, "/\\") !== false) {
 			// cmd executable is a path, so make it absolute

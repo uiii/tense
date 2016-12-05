@@ -1,0 +1,62 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+
+	"tmpDir": {
+		"type": "string",
+		"minLength": 1,
+		"default": ".pw-test"
+	},
+
+	"db": {
+		"type": "object",
+		"properties": {
+			"host": { "type": "string", "default": "localhost" },
+			"port": { "type": "number", "default": 3306 },
+			"user": { "type": "string", "default": "root" },
+			"pass": { "type": "string", "default": "" },
+			"name": { "type": "string", "default": "pw_test" }
+		}
+	},
+
+	"testTags": {
+		"type": "array",
+		"items": {
+			"type": "string",
+			"minLength": 1
+		},
+		"minItems": 1
+	},
+
+	"copySources": {
+		"type": "object",
+		"additionalProperties": {
+			"oneOf": [
+				{
+					"type": "string",
+					"minLength": 1
+				},
+				{
+					"type": "array",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					},
+					"minItems": 1
+				}
+			]
+		}
+	},
+
+	"testCmd": {
+		"type": "string",
+		"minLength": 1
+	},
+
+	"waitAfterTests": {
+		"type": "string",
+		"enum": ["never", "onFailure", "always"],
+		"default": "never"
+	},
+
+	"required": ["testTags", "testCmd"]
+}
