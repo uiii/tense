@@ -107,12 +107,12 @@ class Wireshell {
 		$installPath = Path::join($this->config->tmpDir, "wireshell-$version");
 
 		if (! file_exists($installPath)) {
-			Log::info("Downloading wireshell ...");
+			Log::info("Downloading wireshell $version ...");
 
 			// clone repo
 			Git::cloneRepo(self::$githubUrl, $installPath);
 
-			Log::info("Installing wireshell ...");
+			Log::info("Installing wireshell $version ...");
 
 			// switch to required version
 			Git::checkout($installPath, $version);

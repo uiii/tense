@@ -16,7 +16,8 @@
 	*/
 	"db": {
 		"host": "localhost",
-		"port": 3306,
+		//"port": 3306,
+		"port": 8001,
 		"user": "root",
 		"pass": "",
 		"name": "pw_test" // name of the database
@@ -37,7 +38,7 @@
 	* Example:
 	*	"testTags": ["2.5", "2.6", "2.7", "3.0"]
 	*/
-	"testTags": [],
+	"testTags": ["2.5", "2.7", "3.0"],
 
 	/**
 	* Copy tested project source files to specified
@@ -73,9 +74,9 @@
 	* Path to ProcessWire installation will be in PW_PATH environment variable.
 	*
 	* Example:
-	* 	"testCmd": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
+	* 	"testCmd": "vendor/bin/phpunit --bootstrap vendor/autoload tests/Test.php"
 	*/
-	"testCmd": "",
+	"testCmd": "vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php",
 
 	/**
 	* Test runner can wait and ask the user what to do
