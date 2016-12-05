@@ -3,18 +3,17 @@
 
 	"tmpDir": {
 		"type": "string",
-		"minLength": 1,
-		"default": ".pw-test"
+		"minLength": 1
 	},
 
 	"db": {
 		"type": "object",
 		"properties": {
-			"host": { "type": "string", "default": "localhost" },
-			"port": { "type": "number", "default": 3306 },
-			"user": { "type": "string", "default": "root" },
-			"pass": { "type": "string", "default": "" },
-			"name": { "type": "string", "default": "pw_test" }
+			"host": { "type": "string" },
+			"port": { "type": "number" },
+			"user": { "type": "string" },
+			"pass": { "type": "string" },
+			"name": { "type": "string" }
 		}
 	},
 
@@ -54,8 +53,7 @@
 
 	"waitAfterTests": {
 		"type": "string",
-		"enum": ["never", "onFailure", "always"],
-		"default": "never"
+		"enum": ["never", "onFailure", "always"]
 	},
 
 	"required": ["testTags", "testCmd"]
