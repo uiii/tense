@@ -51,7 +51,7 @@ class Installer {
 		$this->initPWTags();
 	}
 
-	public function installProcessWire($tagName) {
+	public function installProcessWire($tagName, $installPath) {
 		$this->shouldCleanUpFiles = false;
 		$this->shouldCleanUpDatabase = false;
 
@@ -65,8 +65,6 @@ class Installer {
 
 		$this->createDatabase();
 
-		$installPath = Path::join($this->config->tmpDir, "pw");
-
 		if (file_exists($installPath)) {
 			throw new \RuntimeException(sprintf("ProcessWire install path already exists: %s", $installPath));
 		}
@@ -74,8 +72,6 @@ class Installer {
 		$this->shouldCleanUpFiles = true;
 
 		$this->wireshell->installProcessWire($availableTag, $installPath);
-
-		return $installPath;
 	}
 
 	public function uninstallProcessWire($processWirePath) {

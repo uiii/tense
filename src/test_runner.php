@@ -71,6 +71,12 @@ class TestRunner
 
 		$config = json_decode(json_encode(array_replace_recursive($defaultConfig, $config)));
 
+		// fix: when the copySources option is empty object
+		// it is decoded as an empty array but must be an object
+		if (! $config->copySources) {
+			$config->copySources = new \stdClass;
+		}
+
 		$validator = new JsonSchema\Validator;
 		$validator->check($config, (object)['$ref' => 'file://' . Path::join(__DIR__, '../conf/schema.json')]);
 
@@ -103,11 +109,11 @@ class TestRunner
 	protected function testProcessWire($tagName) {
 		Log::info(PHP_EOL . "::: Testing against ProcessWire $tagName :::" . PHP_EOL);
 
-		$processWirePath = null;
+		$processWirePath = Path::join($this->config->tmpDir, "pw");
 		$testSuccess = false;
 
 		try {
-			$processWirePath = $this->installer->installProcessWire($tagName);
+			$this->installer->installProcessWire($tagName, $processWirePath);
 			$this->copySourceFiles($processWirePath);
 
 			$testSuccess = $this->runTests($processWirePath);
