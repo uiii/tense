@@ -2,6 +2,7 @@
     "name": "uiii/pw-test",
     "description": "Testing tool for ProcessWire CMF",
     "type": "project",
+    "license": "MIT",
     "authors": [
         {
             "name": "Richard Jedlička",
