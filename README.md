@@ -6,7 +6,9 @@ Having your tests (PHPUnit, CodeCeption, ...), you will just specify the command
 which run them and list of ProcessWire versions. PW-Test will run you test suite
 for each one of them.
 
-See [example](https://github.com/uiii/pw-test/tree/master/example)
+**See [example](https://github.com/uiii/pw-test/tree/master/example).**
+
+![video](example/video.gif)
 
 # Requirements
 
