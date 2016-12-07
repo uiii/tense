@@ -1,0 +1,2 @@
+# don't change line ending in git patch files
+*.patch binary
