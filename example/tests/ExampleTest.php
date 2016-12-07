@@ -13,11 +13,6 @@ class ExampleTest extends PHPUnit\Framework\TestCase {
 		$modules->triggerInit();
 	}
 
-	public function testVersion() {
-		// this will fail on PW 2.5
-		$this->assertRegExp("/^(?!2.5)/", wire('config')->version);
-	}
-
 	public function testInstalled() {
 		$this->assertTrue(wire('modules')->isInstalled('Helloworld'));
 	}
@@ -25,5 +20,10 @@ class ExampleTest extends PHPUnit\Framework\TestCase {
 	public function testPageHook() {
 		$home = wire('pages')->get('/');
 		$this->assertEquals("Hello World", $home->hello());
+	}
+
+	public function testVersion() {
+		// this will fail on PW 2.5
+		$this->assertRegExp("/^(?!2.5)/", wire('config')->version);
 	}
 }

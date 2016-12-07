@@ -6,9 +6,8 @@ In [example](https://github.com/uiii/pw-test/tree/master/example) directory you 
 
 > For testing is used `PHPUnit` testing framework (https://phpunit.de).
 
-Tests are very simple.
-First test is designed to fail on `ProcessWire 2.5`.
-Other two tests `HelloWorld` module which is distributed with each `ProcessWire` version.
+Tests are very simple. First two tests `HelloWorld` module which is distributed with each `ProcessWire` version.
+Last test is designed to fail on `ProcessWire 2.5`.
 
 **tests/ExampleTest.php**
 ```php

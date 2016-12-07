@@ -16,8 +16,7 @@
 	*/
 	"db": {
 		"host": "localhost",
-		//"port": 3306,
-		"port": 8001,
+		"port": 3306,
 		"user": "root",
 		"pass": "",
 		"name": "pw_test" // name of the database
@@ -76,7 +75,7 @@
 	* Example:
 	* 	"testCmd": "vendor/bin/phpunit --bootstrap vendor/autoload tests/Test.php"
 	*/
-	"testCmd": "vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php",
+	"testCmd": "../vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php",
 
 	/**
 	* Test runner can wait and ask the user what to do
