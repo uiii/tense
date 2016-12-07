@@ -62,9 +62,12 @@ PW-Test is configured to test `ProcessWire` versions `2.5`, `2.7` and `3.0`. In 
 
 1. Look at the `db` section in `pw-test.json` configuration and update it if necessary.
 2. Make sure MySQL is running and corresponds with the configuration.
-3. In `example` directory run:
+3. In `PW-Test` **root** directory run:
 ```
 composer install
+```
+4. In `example` directory run:
+```
 php ../bin/pw-test
 ```
 

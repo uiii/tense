@@ -18,6 +18,7 @@
         "t1st3/php-json-minify": "^0.6.2"
     },
     "require-dev": {
-        "nette/tester": "^1.7"
+        "nette/tester": "^1.7",
+        "phpunit/phpunit": "^5.7"
     }
 }
