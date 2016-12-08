@@ -74,4 +74,4 @@ php ../bin/pw-test
 
 Output may look like this:
 
-[![video](example/asciicast.gif)](https://asciinema.org/a/95409)
+[![video](example/asciicast.gif)](https://asciinema.org/a/95368)
