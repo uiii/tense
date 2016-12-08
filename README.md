@@ -1,6 +1,6 @@
 # PW-Test
 
-Command-line tool to easily run tests agains multiple [ProcessWire](https://processwire.com) versions.
+Command-line tool to easily run tests agains multiple versions of [ProcessWire CMF](https://processwire.com).
 
 Are you building a module, or a template and you need to make sure it works in all supported ProcessWire versions?
 Then `PW-Test` is exactly what you need. Write the tests (PHPUnit, CodeCeption, ...).

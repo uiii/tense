@@ -1,6 +1,6 @@
 {
     "name": "uiii/pw-test",
-    "description": "Testing tool for ProcessWire CMF",
+    "description": "Easy testing against multiple versions of ProcessWire CMF",
     "type": "project",
     "license": "MIT",
     "authors": [
