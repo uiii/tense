@@ -63,22 +63,24 @@ vendor/bin/pw-test
 
 # Configuration
 
-Copy example configuration [`conf/pw-test.json`](conf/pw-test.json) to your projects root directory and set options according to your needs.
+Copy example configuration [`conf/pw-test.json`](conf/pw-test.json) to your project's root directory and set options according to your needs.
 
 ## tmpDir
 Path to a directory where are stored files needed for testing
 (e.g ProcessWire installation, ...).
 
->Path is relative to the this file's parent directory.
+> Path is relative to the config file's parent directory.
 
 *Default is `.pw-test`*
 
 ## db
-Database connection parameters
+Database connection parameters.
 
-They are used to create the database
+> They are used to create the database
 for ProcessWire installation, so the user
 must have the privileges to create a database.
+
+> `db.name` is a name of the database
 
 *Example:*
 ```json
@@ -87,7 +89,7 @@ must have the privileges to create a database.
 	"port": 3306,
 	"user": "root",
 	"pass": "",
-	"name": "pw_test" // name of the database
+	"name": "pw_test"
 }
 ```
 
@@ -95,8 +97,8 @@ must have the privileges to create a database.
 List of ProcessWire tags/versions used for testing.
 
 It doesn't have to be exact version number.
-For each version will be found latest matching
-existing tag/version (e.g. `3.0` -> `3.0.42`).
+For each tag/version will be found latest matching
+existing tag (e.g. `3.0` -> `3.0.42`).
 
 Versions are tested in the specified order.
 
@@ -111,18 +113,17 @@ Versions are tested in the specified order.
 Copy tested project source files to specified
 destinations in ProcessWire installation.
 
-Destination paths are relative to ProcessWire
+> Destination paths are relative to ProcessWire
 installation root.
 
-Source paths are relative to this file's parent directory.
+> Source paths are relative to the config file's parent directory.
 
 Sources can be either array or a single string.
-If array of sources are specified, the thestination
-is considered a directory where all source are copied.
-
-If source item is a directory, it will be copied recursively.
-
+If array of sources is specified, the destination
+is considered a directory where all sources are copied.
 If single string source is specified, one to one copy is used.
+
+> If source item is a directory, it will be copied recursively.
 
 *Example:*
 
@@ -137,14 +138,14 @@ If single string source is specified, one to one copy is used.
 ```
 
 Consider `pw-test.json` is in project's root and `<project-root>/Libs` is a directory. In this example these files will be copied:
-- `<project-root>/templates/home.php` to `<pw-path>/site/template/HomeTemplate.php`
+- `<project-root>/templates/home.php` to `<pw-path>/site/templates/HomeTemplate.php`
 - `<project-root>/Libs/*` to `<pw-path>/site/modules/Module/Libs`
 - `<project-root>/Module.module` to `<pw-path>/site/modules/Module/Module.module`
 
 ## testCmd
 Command to execute a test suite.
 
-> Path to ProcessWire installation will be in `PW_PATH` environment variable.
+> Path to the ProcessWire installation will be in `PW_PATH` environment variable.
 
 *Example:*
 ```json
@@ -153,7 +154,7 @@ Command to execute a test suite.
 
 ## waitAfterTests
 Test runner can wait and ask the user what to do
-after a test suite against a ProcessWire instance are completed.
+after each test suite against a ProcessWire instance is completed.
 
 *Possible values are:*
 - `never` - never wait (*default*)

@@ -27,8 +27,8 @@
 	*
 	* It doesn't have to be exact version number.
 	*
-	* For each version will be found latest matching
-	* existing tag/version (e.g. 3.0 -> 3.0.42).
+	* For each tag/version will be found latest matching
+	* existing tag (e.g. 3.0 -> 3.0.42).
 	*
 	* Versions are tested in the specified order.
 	*
@@ -43,18 +43,16 @@
 	* Copy tested project source files to specified
 	* destinations in ProcessWire installation.
 	*
-	* Destination paths are relative to ProcessWire
-	* installation root.
+	* Destination paths are relative to ProcessWire installation root.
 	*
-	* Source paths are relative to this file's parent directory.
+	* Source paths are relative to the config file's parent directory.
 	*
 	* Sources can be either array or a single string.
-	* If array of sources are specified, the thestination
-	* is considered a directory where all source are copied.
+	* If array of sources is specified, the destination
+	* is considered a directory where all sources are copied.
+	* If single string source is specified, one to one copy is used.
 	*
 	* If source item is a directory, it will be copied recursively.
-	*
-	* If single string source is specified, one to one copy is used.
 	*
 	* Example:
 	*	"copySources": {
@@ -68,9 +66,9 @@
 	"copySources": {},
 
 	/**
-	* Command to run to perform tests against a ProcessWire instance.
+	* Command to execute a test suite.
 	*
-	* Path to ProcessWire installation will be in PW_PATH environment variable.
+	* Path to the ProcessWire installation will be in `PW_PATH` environment variable.
 	*
 	* Example:
 	* 	"testCmd": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
@@ -79,7 +77,7 @@
 
 	/**
 	* Test runner can wait and ask the user what to do
-	* after tests against a ProcessWire instance are completed.
+	* after each test suite against a ProcessWire instance is completed.
 	*
 	* Possible values are:
 	* 'never' - never wait (default)
