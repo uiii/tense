@@ -74,4 +74,4 @@ php ../bin/pw-test
 
 Output may look like this:
 
-![output](video.gif)
+![output](asciicast.gif)

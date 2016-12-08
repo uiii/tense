@@ -1,0 +1,262 @@
+{
+  "command": null,
+  "height": 23,
+  "title": null,
+  "stdout": [
+    [
+      0.180726,
+      "~/pw-test/example$ "
+    ],
+    [
+      0.701411,
+      "p"
+    ],
+    [
+      0.11201,
+      "w"
+    ],
+    [
+      0.127925,
+      "-"
+    ],
+    [
+      0.752106,
+      "t"
+    ],
+    [
+      0.200029,
+      "e"
+    ],
+    [
+      0.23995,
+      "s"
+    ],
+    [
+      0.336088,
+      "t"
+    ],
+    [
+      0.751332,
+      "\r\n"
+    ],
+    [
+      0.086617,
+      "\r\n"
+    ],
+    [
+      0.00916,
+      "Initializing ...\r\n"
+    ],
+    [
+      3.176116,
+      "\r\n::: Testing against ProcessWire 2.5 :::\r\n\r\n"
+    ],
+    [
+      0.0067,
+      "Using latest matching ProcessWire version: 2.5.3\r\n"
+    ],
+    [
+      0.498072,
+      "Installing ProcessWire 2.5.3 ...\r\n"
+    ],
+    [
+      3.403507,
+      "Running tests ...\r\n\r\n"
+    ],
+    [
+      0.074417,
+      "> "
+    ],
+    [
+      0.277005,
+      "PHPUnit 5."
+    ],
+    [
+      0.000227,
+      "7.2 by Sebastian Bergmann and contributor"
+    ],
+    [
+      0.000162,
+      "s.\r\n> \r\n> "
+    ],
+    [
+      0.12865,
+      "."
+    ],
+    [
+      0.001118,
+      "."
+    ],
+    [
+      0.00152,
+      "\u001b[41;3"
+    ],
+    [
+      0.000168,
+      "7mF\u001b[0m                   "
+    ],
+    [
+      7.8e-05,
+      "                          "
+    ],
+    [
+      6.5e-05,
+      "            "
+    ],
+    [
+      5.6e-05,
+      "        3 / "
+    ],
+    [
+      0.000408,
+      "3 (100%)\r\n"
+    ],
+    [
+      0.000669,
+      "> \r\n> Time: 312 ms, Memory: 14.00MB\r\n> \r\n> There was 1 failure:\r\n> \r\n> 1) ExampleTest::testVersion\r\n> "
+    ],
+    [
+      0.013353,
+      "Failed asse"
+    ],
+    [
+      0.000126,
+      "rting that '2.5.3' matches PCRE pa"
+    ],
+    [
+      7e-05,
+      "ttern \"/^(?!2.5)"
+    ],
+    [
+      0.000989,
+      "/\".\r\n> \r\n> /ho"
+    ],
+    [
+      0.001174,
+      "me/uiii/pw-test/example/tests/ExampleTest.php:27\r\n> \r\n> \u001b[37;41mFAILURES!\u001b[0m\r\n> \u001b[37;41mTests: 3\u001b[0m\u001b[37;41m, Assertions: 3\u001b[0m\u001b[37;41m, Failures: 1\u001b[0m\u001b[3"
+    ],
+    [
+      0.003442,
+      "7;41m.\u001b[0m\r\n> "
+    ],
+    [
+      0.018853,
+      "\r\n\r\nTests failed\r\n\r\nClean up & Continue\r\n"
+    ],
+    [
+      2.174703,
+      "\r\n::: Testing against ProcessWire 2.7 :::\r\n\r\nUsing latest matching ProcessWire version: 2.7.2\r\n"
+    ],
+    [
+      0.456715,
+      "Installing ProcessWire 2.7.2 ...\r\n"
+    ],
+    [
+      3.451766,
+      "Running tests ...\r\n\r\n"
+    ],
+    [
+      0.048293,
+      "> "
+    ],
+    [
+      0.572342,
+      "PHPUnit 5.7.2 by Sebastian Bergmann and contributors.\r\n> \r\n> "
+    ],
+    [
+      0.052477,
+      "."
+    ],
+    [
+      0.00318,
+      "."
+    ],
+    [
+      0.01241,
+      ".                                                                 3 / 3 (100%)\r\n> \r\n> Time: 531 ms, Memory: 16.00MB\r\n> \r\n> \u001b[30;42mOK (3 tests, 3 assertions)\u001b[0m\r\n> "
+    ],
+    [
+      0.030288,
+      "\r\n\r\nClean up & Continue\r\n"
+    ],
+    [
+      2.375925,
+      "\r\n::: Testing against ProcessWire 3.0 :::\r\n\r\nUsing latest matching ProcessWire version: 3.0.42\r\n"
+    ],
+    [
+      0.731933,
+      "Installing ProcessWire 3.0.42 ...\r\n"
+    ],
+    [
+      3.417036,
+      "Running tests ...\r\n\r\n"
+    ],
+    [
+      0.04814,
+      "> "
+    ],
+    [
+      0.714526,
+      "PHPUnit"
+    ],
+    [
+      0.000178,
+      " 5.7.2 by Sebastian Bergmann and contributors.\r\n> \r\n> "
+    ],
+    [
+      0.080207,
+      "."
+    ],
+    [
+      0.001768,
+      "."
+    ],
+    [
+      0.00039,
+      ".     "
+    ],
+    [
+      9.4e-05,
+      "         "
+    ],
+    [
+      0.000109,
+      "                       "
+    ],
+    [
+      6.7e-05,
+      "                "
+    ],
+    [
+      6.3e-05,
+      "           "
+    ],
+    [
+      6.1e-05,
+      " 3 / 3 (10"
+    ],
+    [
+      0.000578,
+      "0%)\r\n> "
+    ],
+    [
+      0.000464,
+      "\r\n> Time: 701 ms, Memory: 20.00MB\r\n> \r\n> \u001b[30;42mOK (3 tests, 3 assertions)\u001b[0m\r\n> "
+    ],
+    [
+      0.05345,
+      "\r\n\r\nClean up & Continue\r\n"
+    ],
+    [
+      3.05345,
+      ""
+    ]
+  ],
+  "width": 120,
+  "version": 1,
+  "duration": 25.548034,
+  "env": {
+    "TERM": "xterm",
+    "SHELL": "/bin/bash"
+  }
+}

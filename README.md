@@ -8,7 +8,7 @@ for each one of them.
 
 **See [example](https://github.com/uiii/pw-test/tree/master/example).**
 
-![video](example/video.gif)
+![video](example/asciicast.gif)
 
 # Requirements
 
