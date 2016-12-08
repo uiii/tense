@@ -12,14 +12,19 @@ Tell `PW-Test` which ProcessWire versions you are interested in and it will do t
 
 [![video](example/asciicast.gif)](https://asciinema.org/a/95368)
 
-# Requirements
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Usage](#usage)
+7. [Configuration](#configuration)
+
+## Requirements
 
 - PHP 5.6 or greater
 - Composer (https://getcomposer.org)
 - Git (https://git-scm.com)
 - MySQL or MariaDB 5.0.15 or greater
 
-## PHP.ini
+### PHP.ini
 
 `php.ini` used by `php` cli command must have enabled these extensions:
 
@@ -30,7 +35,7 @@ Tell `PW-Test` which ProcessWire versions you are interested in and it will do t
 - openssl
 - pdo_mysql
 
-# Installation
+## Installation
 
 > Don't forget to setup all [requirements](#requirements) first.
 
@@ -45,7 +50,7 @@ cd <your-project>
 composer require --dev uiii/pw-test
 ```
 
-# Usage
+## Usage
 
 Go to your **project's root** directory.
 
@@ -61,11 +66,11 @@ or if you've installed `PW-Test` as projects dependecy:
 vendor/bin/pw-test
 ```
 
-# Configuration
+## Configuration
 
 Copy example configuration [`conf/pw-test.json`](conf/pw-test.json) to your project's root directory and set options according to your needs.
 
-## tmpDir
+### tmpDir
 Path to a directory where are stored files needed for testing
 (e.g ProcessWire installation, ...).
 
@@ -73,14 +78,14 @@ Path to a directory where are stored files needed for testing
 
 *Default is `.pw-test`*
 
-## db
+### db
 Database connection parameters.
 
 > They are used to create the database
 for ProcessWire installation, so the user
 must have the privileges to create a database.
 
-> `db.name` is a name of the database
+> `db.name` is a name of the database.
 
 *Example:*
 ```json
@@ -93,7 +98,7 @@ must have the privileges to create a database.
 }
 ```
 
-## testTags
+### testTags
 List of ProcessWire tags/versions used for testing.
 
 It doesn't have to be exact version number.
@@ -106,10 +111,10 @@ Versions are tested in the specified order.
 
 *Example:*
 ```json
-"testTags": ["2.5", "2.6", "2.7", "3.0"]
+"testTags": ["2.5", "2.6", "2.7.1", "3.0"]
 ```
 
-## copySources
+### copySources
 Copy tested project source files to specified
 destinations in ProcessWire installation.
 
@@ -142,7 +147,7 @@ Consider `pw-test.json` is in project's root and `<project-root>/Libs` is a dire
 - `<project-root>/Libs/*` to `<pw-path>/site/modules/Module/Libs`
 - `<project-root>/Module.module` to `<pw-path>/site/modules/Module/Module.module`
 
-## testCmd
+### testCmd
 Command to execute a test suite.
 
 > Path to the ProcessWire installation will be in `PW_PATH` environment variable.
@@ -152,7 +157,7 @@ Command to execute a test suite.
 "testCmd": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
 ```
 
-## waitAfterTests
+### waitAfterTests
 Test runner can wait and ask the user what to do
 after each test suite against a ProcessWire instance is completed.
 
