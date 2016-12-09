@@ -8,9 +8,12 @@ Tell `PW-Test` which ProcessWire versions you are interested in and it will do t
 
 > Tested on **Windows** and **Linux**
 
-**See [example](https://github.com/uiii/pw-test/tree/master/example).**
+**See [example](https://github.com/uiii/pw-test/tree/master/example)**
+or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-processwire-versions-automatically) in a real project**.
 
 [![video](example/asciicast.gif)](https://asciinema.org/a/95368)
+
+## Table of Contents
 
 1. [Requirements](#requirements)
 2. [Installation](#installation)
@@ -24,7 +27,7 @@ Tell `PW-Test` which ProcessWire versions you are interested in and it will do t
 - Git (https://git-scm.com)
 - MySQL or MariaDB 5.0.15 or greater
 
-### PHP.ini
+### php.ini
 
 `php.ini` used by `php` cli command must have enabled these extensions:
 
@@ -41,13 +44,13 @@ Tell `PW-Test` which ProcessWire versions you are interested in and it will do t
 
 Install globally:
 ```
-composer global require uiii/pw-test
+composer global require uiii/pw-test:dev-master
 ```
 
 or install as a project dependency:
 ```
 cd <your-project>
-composer require --dev uiii/pw-test
+composer require --dev uiii/pw-test:dev-master
 ```
 
 ## Usage
