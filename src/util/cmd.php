@@ -108,6 +108,7 @@ class Cmd {
 		$result->exitCode = $exitCode;
 		$result->output = $output;
 
+		Log::debug(sprintf("Command output: %s", implode("\n", $output)));
 		Log::debug(sprintf("Command exit code: %s", $exitCode));
 
 		if ($exitCode !== 0 && $options['throw_on_error']) {

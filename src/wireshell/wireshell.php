@@ -34,7 +34,7 @@ class Wireshell {
 	public static $githubUrl = "https://github.com/wireshell/wireshell";
 
 	protected static $wireshellVersions = [
-		"develop" => ["supportsPW" => ["/^3/"]],
+		"2f62313" => ["supportsPW" => ["/^3/"]],
 		"0.6.0" => [
 			"supportsPW" => ["/^2.[4-7](\..*)?$/"],
 			// 0.6.0 version needs to be patched
@@ -86,7 +86,17 @@ class Wireshell {
 			$installPath
 		];
 
-		Cmd::run("php $wireshellPath", $wireshellArgs);
+		$result = Cmd::run("php $wireshellPath", $wireshellArgs);
+
+		// HACK: wireshell doesn't stop on error but print it
+		$errors = preg_grep("/ERROR/", $result->output);
+		if ($errors) {
+			$result->exitCode = 1;
+			$result->output = array_map(function ($error) {
+				return preg_replace("/^.*ERROR: (.*) \[\] \[\]$/", "$1", $error);
+			}, $errors);
+			throw new CmdException($result);
+		}
 
 		return $installPath;
 	}
