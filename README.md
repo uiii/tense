@@ -109,6 +109,8 @@ Versions are tested in the specified order.
 
 > Minimal supported version is `2.5`.
 
+> Version `2.8` currently not supported.
+
 *Example:*
 ```json
 "testTags": ["2.5", "2.6", "2.7.1", "3.0"]
