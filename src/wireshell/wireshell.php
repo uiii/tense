@@ -75,7 +75,6 @@ class Wireshell {
 			"--dbName {$this->config->db->name}",
 			"--dbUser {$this->config->db->user}",
 			"--dbPass \"{$this->config->db->pass}\"",
-			"--adminUrl admin",
 			"--username admin",
 			"--userpass admin01",
 			"--useremail admin@example.com",
