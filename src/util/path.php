@@ -99,7 +99,7 @@ class Path {
 		foreach($recursiveIterator as $item) {
 			$itemPath = $item->getPathname();
 
-			if ($item->isDir()) {
+			if ($item->isDir() && !$item->isLink()) {
 				Log::debug(sprintf("Remove directory: %s", $itemPath), 1);
 
 				rmdir($itemPath);
