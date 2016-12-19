@@ -24,11 +24,19 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/util/log.php';
-require_once __DIR__ . '/util/path.php';
-require_once __DIR__ . '/util/git.php';
-require_once __DIR__ . '/util/database.php';
-require_once __DIR__ . '/wireshell/wireshell.php';
+namespace PWTest;
+
+require_once __DIR__ . '/Helper/Log.php';
+require_once __DIR__ . '/Helper/Path.php';
+require_once __DIR__ . '/Helper/Git.php';
+require_once __DIR__ . '/Helper/Database.php';
+require_once __DIR__ . '/Helper/Wireshell.php';
+
+use PWTest\Helper\Log;
+use PWTest\Helper\Path;
+use PWTest\Helper\Git;
+use PWTest\Helper\Database;
+use PWTest\Helper\Wireshell;
 
 class Installer {
 	public static $pwGithubRepos = [
@@ -46,7 +54,6 @@ class Installer {
 
 	public function __construct($config) {
 		$this->config = $config;
-		$this->wireshell = new Wireshell($config);
 
 		$this->initPWTags();
 	}
@@ -71,7 +78,7 @@ class Installer {
 
 		$this->shouldCleanUpFiles = true;
 
-		$this->wireshell->installProcessWire($availableTag, $installPath);
+		Wireshell::installProcessWire($availableTag, $installPath, $this->config);
 	}
 
 	public function uninstallProcessWire($processWirePath) {

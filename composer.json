@@ -11,7 +11,7 @@
         }
     ],
     "bin": [
-        "bin/pw-test"
+        "pw-test"
     ],
     "require": {
         "php": ">=5.6",

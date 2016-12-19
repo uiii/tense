@@ -24,9 +24,11 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/log.php';
+namespace PWTest\Helper;
 
-class Path {
+require_once __DIR__ . '/Log.php';
+
+abstract class Path {
 	public static function isAbsolute($path) {
 		return (bool) preg_match("#([a-z]:)?[/\\\\]#Ai", $path);
 	}
@@ -57,10 +59,10 @@ class Path {
 		mkdir($destination, 0777, true);
 
 		$directoryIterator = new \RecursiveDirectoryIterator(
-			$source, RecursiveDirectoryIterator::SKIP_DOTS);
+			$source, \RecursiveDirectoryIterator::SKIP_DOTS);
 
 		$recursiveIterator = new \RecursiveIteratorIterator(
-			$directoryIterator, RecursiveIteratorIterator::SELF_FIRST);
+			$directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
 
 		foreach($recursiveIterator as $item) {
 			if ($item->isDir()) {
@@ -91,10 +93,10 @@ class Path {
 		}
 
 		$directoryIterator = new \RecursiveDirectoryIterator(
-			$path, RecursiveDirectoryIterator::SKIP_DOTS);
+			$path, \RecursiveDirectoryIterator::SKIP_DOTS);
 
 		$recursiveIterator = new \RecursiveIteratorIterator(
-			$directoryIterator, RecursiveIteratorIterator::CHILD_FIRST);
+			$directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 
 		foreach($recursiveIterator as $item) {
 			$itemPath = $item->getPathname();

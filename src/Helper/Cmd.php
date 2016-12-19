@@ -24,7 +24,9 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/log.php';
+namespace PWTest\Helper;
+
+require_once __DIR__ . '/Log.php';
 
 class CmdException extends \RuntimeException {
 	public function __construct($result) {
@@ -39,7 +41,7 @@ class CmdException extends \RuntimeException {
 	}
 }
 
-class Cmd {
+abstract class Cmd {
 	public static $defaultOptions = [
 		'cwd' => null,
 		'env' => null,

@@ -71,7 +71,7 @@ vendor/bin/pw-test
 
 ## Configuration
 
-Copy example configuration [`conf/pw-test.json`](conf/pw-test.json) to your project's root directory and set options according to your needs.
+Copy example configuration [`pw-test.json`](pw-test.json) to your project's root directory and set options according to your needs.
 
 ### tmpDir
 Path to a directory where are stored files needed for testing

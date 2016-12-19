@@ -24,32 +24,41 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/cmd.php';
+namespace PWTest\Helper;
 
-class DatabaseException extends \RuntimeException {
-	public function __construct($message) {
-		parent::__construct($message);
+require_once __DIR__ . '/Cmd.php';
+
+abstract class Git {
+	public static function cloneRepo($repoUrl, $repoPath) {
+		Cmd::run("git clone", [$repoUrl, $repoPath]);
 	}
-}
 
-class Database {
-	public static function query($dbConfig, $query) {
-		$mysqlArgs = [
-			"-h {$dbConfig->host}",
-			"-P {$dbConfig->port}",
-			"-u {$dbConfig->user}"
-		];
+	public static function checkout($repoPath, $target) {
+		Cmd::run("git checkout -f", [$target], ['cwd' => $repoPath]);
+	}
 
-		if ($dbConfig->pass) {
-			array_push($mysqlArgs, "-p\"{$dbConfig->pass}\"");
+	public static function apply($repoPath, $patchPath) {
+		Cmd::run("git apply", [$patchPath], ['cwd' => $repoPath]);
+	}
+
+	public static function getTags($repo) {
+		$repoUrl = "https://github.com/$repo";
+
+		$result = Cmd::run("git ls-remote --tags --refs $repoUrl");
+
+		$tags = [];
+
+		foreach (array_reverse($result->output) as $line) {
+			list($sha, $ref) = explode("\t", $line);
+
+			$tag = new \stdClass;
+			$tag->name = explode('/', $ref)[2];
+			$tag->sha = $sha;
+			$tag->zip = $repoUrl . "/archive/$sha.zip";
+
+			array_push($tags, $tag);
 		}
 
-		array_push($mysqlArgs, "-e \"$query\"");
-
-		$result = Cmd::run("mysql", $mysqlArgs);
-
-		if ($result->exitCode !== 0) {
-			throw new DatabaseException(implode(PHP_EOL, $result->output));
-		}
+		return $tags;
 	}
 }

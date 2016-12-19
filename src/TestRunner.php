@@ -24,11 +24,18 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/util/log.php';
-require_once __DIR__ . '/util/path.php';
-require_once __DIR__ . '/installer.php';
+namespace PWTest;
+
+require_once __DIR__ . '/Helper/Log.php';
+require_once __DIR__ . '/Helper/Path.php';
+require_once __DIR__ . '/Helper/Cmd.php';
+require_once __DIR__ . '/Installer.php';
 
 use t1st3\JSONMin\JSONMin;
+
+use PWTest\Helper\Log;
+use PWTest\Helper\Path;
+use PWTest\Helper\Cmd;
 
 class TestRunner
 {
@@ -65,7 +72,7 @@ class TestRunner
 			die();
 		}
 
-		$defaultConfigFile = Path::join(__DIR__, '../conf/pw-test.json');
+		$defaultConfigFile = Path::join(__DIR__, '../pw-test.json');
 		$defaultConfig = json_decode(JSONMin::minify(file_get_contents($defaultConfigFile)), true);
 		$config = json_decode(JSONMin::minify(file_get_contents($configFile)), true);
 
@@ -77,8 +84,8 @@ class TestRunner
 			$config->copySources = new \stdClass;
 		}
 
-		$validator = new JsonSchema\Validator;
-		$validator->check($config, (object)['$ref' => 'file://' . Path::join(__DIR__, '../conf/schema.json')]);
+		$validator = new \JsonSchema\Validator;
+		$validator->check($config, (object)['$ref' => 'file://' . Path::join(__DIR__, 'file/config_schema.json')]);
 
 		if (! $validator->isValid()) {
 			$errorMessages = [];

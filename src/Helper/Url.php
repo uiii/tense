@@ -24,9 +24,11 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/log.php';
+namespace PWTest\Helper;
 
-class Url {
+require_once __DIR__ . '/Log.php';
+
+abstract class Url {
 	public static function get($url, $outputFile = null) {
 		Log::debug(sprintf("Downloading URL: %s", $url));
 		Log::debug(sprintf("To file: %s", $outputFile));

@@ -24,39 +24,45 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/cmd.php';
+namespace PWTest\Helper;
 
-class Git {
-	public static function cloneRepo($repoUrl, $repoPath) {
-		Cmd::run("git clone", [$repoUrl, $repoPath]);
+abstract class Log {
+	/**
+	* Log level
+	*
+	* 0 - quiet (no output)
+	* 1 - errors only
+	* 2 - errors & warnings
+	* 3 - errors & warnings & info (default)
+	* 4 - debug (all)
+	**/
+	public static $level = 3;
+
+	public static function error($message) {
+		self::write(1, $message, "[ERROR]");
 	}
 
-	public static function checkout($repoPath, $target) {
-		Cmd::run("git checkout -f", [$target], ['cwd' => $repoPath]);
+	public static function warn($message) {
+		self::write(2, $message, "[WARNING]");
 	}
 
-	public static function apply($repoPath, $patchPath) {
-		Cmd::run("git apply", [$patchPath], ['cwd' => $repoPath]);
+	public static function info($message) {
+		self::write(3, $message);
 	}
 
-	public static function getTags($repo) {
-		$repoUrl = "https://github.com/$repo";
+	public static function debug($message, $debugLevel = 0) {
+		self::write(4 + $debugLevel, $message, "[DEBUG]");
+	}
 
-		$result = Cmd::run("git ls-remote --tags --refs $repoUrl");
-
-		$tags = [];
-
-		foreach (array_reverse($result->output) as $line) {
-			list($sha, $ref) = explode("\t", $line);
-
-			$tag = new \stdClass;
-			$tag->name = explode('/', $ref)[2];
-			$tag->sha = $sha;
-			$tag->zip = $repoUrl . "/archive/$sha.zip";
-
-			array_push($tags, $tag);
+	protected static function write($minLevel, $message, $prefix = "") {
+		if (self::$level < $minLevel) {
+			return;
 		}
 
-		return $tags;
+		if ($prefix) {
+			$prefix .= " ";
+		}
+
+		echo sprintf("%s%s" . PHP_EOL, $prefix, $message);
 	}
 }

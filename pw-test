@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+
+<?php
+
+$autoloadPaths = [
+    __DIR__ . '/vendor/autoload.php',
+    __DIR__ . '/../../autoload.php'
+];
+
+foreach ($autoloadPaths as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+        break;
+    }
+}
+
+require __DIR__ . '/src/Helper/Log.php';
+require __DIR__ . '/src/Helper/Path.php';
+require __DIR__ . '/src/TestRunner.php';
+
+PWTest\Helper\Log::$level = 3;
+
+$configFile = PWTest\Helper\Path::join(getcwd(), 'pw-test.json');
+
+$testRunner = new PWTest\TestRunner($configFile);
+$testRunner->run();

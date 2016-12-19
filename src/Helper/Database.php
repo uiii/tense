@@ -24,43 +24,34 @@
  * THE SOFTWARE.
  */
 
-class Log {
-	/**
-	* Log level
-	*
-	* 0 - quiet (no output)
-	* 1 - errors only
-	* 2 - errors & warnings
-	* 3 - errors & warnings & info (default)
-	* 4 - debug (all)
-	**/
-	public static $level = 3;
+namespace PWTest\Helper;
 
-	public static function error($message) {
-		self::write(1, $message, "[ERROR]");
+require_once __DIR__ . '/Cmd.php';
+
+class DatabaseException extends \RuntimeException {
+	public function __construct($message) {
+		parent::__construct($message);
 	}
+}
 
-	public static function warn($message) {
-		self::write(2, $message, "[WARNING]");
-	}
+abstract class Database {
+	public static function query($dbConfig, $query) {
+		$mysqlArgs = [
+			"-h {$dbConfig->host}",
+			"-P {$dbConfig->port}",
+			"-u {$dbConfig->user}"
+		];
 
-	public static function info($message) {
-		self::write(3, $message);
-	}
-
-	public static function debug($message, $debugLevel = 0) {
-		self::write(4 + $debugLevel, $message, "[DEBUG]");
-	}
-
-	protected static function write($minLevel, $message, $prefix = "") {
-		if (self::$level < $minLevel) {
-			return;
+		if ($dbConfig->pass) {
+			array_push($mysqlArgs, "-p\"{$dbConfig->pass}\"");
 		}
 
-		if ($prefix) {
-			$prefix .= " ";
-		}
+		array_push($mysqlArgs, "-e \"$query\"");
 
-		echo sprintf("%s%s" . PHP_EOL, $prefix, $message);
+		$result = Cmd::run("mysql", $mysqlArgs);
+
+		if ($result->exitCode !== 0) {
+			throw new DatabaseException(implode(PHP_EOL, $result->output));
+		}
 	}
 }

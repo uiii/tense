@@ -24,13 +24,15 @@
  * THE SOFTWARE.
  */
 
-require_once __DIR__ . '/../util/log.php';
-require_once __DIR__ . '/../util/path.php';
-require_once __DIR__ . '/../util/git.php';
-require_once __DIR__ . '/../util/url.php';
-require_once __DIR__ . '/../util/cmd.php';
+namespace PWTest\Helper;
 
-class Wireshell {
+require_once __DIR__ . '/Log.php';
+require_once __DIR__ . '/Path.php';
+require_once __DIR__ . '/Git.php';
+require_once __DIR__ . '/Url.php';
+require_once __DIR__ . '/Cmd.php';
+
+abstract class Wireshell {
 	public static $githubUrl = "https://github.com/wireshell/wireshell";
 
 	protected static $wireshellVersions = [
@@ -44,25 +46,18 @@ class Wireshell {
 		]
 	];
 
-	protected $wireshellPath;
-	protected $config;
-
-	public function __construct($config) {
-		$this->config = $config;
-	}
-
-	public function installProcessWire($tag, $installPath) {
-		$version = $this->getRequiredVersion($tag->name);
+	public static function installProcessWire($tag, $installPath, $config) {
+		$version = self::getRequiredVersion($tag->name);
 
 		if (! $version) {
 			throw new \RuntimeException("Wireshell (needed for ProcessWire installation) doesn't support version $tag->name.");
 		}
 
 		// install required wireshell version if not installed
-		$wireshellPath = $this->installSelf($version);
+		$wireshellPath = self::installSelf($version, $config->tmpDir);
 
 		// download PW source if missing
-		$pwZipPath = $this->downloadProcessWire($tag);
+		$pwZipPath = self::downloadProcessWire($tag, $config->tmpDir);
 
 		// install PW
 		Log::info("Installing ProcessWire $tag->name ...");
@@ -70,11 +65,11 @@ class Wireshell {
 		$wireshellArgs = [
 			"new",
 			"--src $pwZipPath",
-			"--dbHost {$this->config->db->host}",
-			"--dbPort {$this->config->db->port}",
-			"--dbName {$this->config->db->name}",
-			"--dbUser {$this->config->db->user}",
-			"--dbPass \"{$this->config->db->pass}\"",
+			"--dbHost {$config->db->host}",
+			"--dbPort {$config->db->port}",
+			"--dbName {$config->db->name}",
+			"--dbUser {$config->db->user}",
+			"--dbPass \"{$config->db->pass}\"",
 			"--username admin",
 			"--userpass admin01",
 			"--useremail admin@example.com",
@@ -100,8 +95,8 @@ class Wireshell {
 		return $installPath;
 	}
 
-	protected function downloadProcessWire($tag) {
-		$zipPath = Path::join($this->config->tmpDir, "pw-{$tag->name}.zip");
+	protected static function downloadProcessWire($tag, $dir) {
+		$zipPath = Path::join($dir, "pw-{$tag->name}.zip");
 
 		if (! file_exists($zipPath)) {
 			Log::info("Downloading ProcessWire $tag->name ...");
@@ -112,8 +107,8 @@ class Wireshell {
 		return $zipPath;
 	}
 
-	protected function installSelf($version) {
-		$installPath = Path::join($this->config->tmpDir, "wireshell-$version");
+	protected static function installSelf($version, $installDir) {
+		$installPath = Path::join($installDir, "wireshell-$version");
 
 		if (! file_exists($installPath)) {
 			Log::info("Downloading wireshell $version ...");
@@ -130,7 +125,7 @@ class Wireshell {
 			$versionInfo = self::$wireshellVersions[$version];
 			$needsPatch = array_key_exists("needsPatch", $versionInfo) ? $versionInfo["needsPatch"] : null;
 			if ($needsPatch) {
-				$patchPath = Path::join(__DIR__, $needsPatch);
+				$patchPath = Path::join(__DIR__, "../file/wireshell_$needsPatch");
 				Git::apply($installPath, $patchPath);
 			}
 		}
@@ -142,7 +137,7 @@ class Wireshell {
 		return Path::join($installPath, "wireshell");
 	}
 
-	protected function getRequiredVersion($pwTag) {
+	protected static function getRequiredVersion($pwTag) {
 		foreach (self::$wireshellVersions as $wireshellVersion => $info) {
 			foreach ($info['supportsPW'] as $tagRegex) {
 				if (preg_match($tagRegex, $pwTag)) {

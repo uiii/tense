@@ -67,11 +67,11 @@ composer install
 ```
 4. In `example` directory run:
 ```
-php ../bin/pw-test
+php ../pw-test
 ```
 
 ## Output
 
 Output may look like this:
 
-[![video](example/asciicast.gif)](https://asciinema.org/a/95368)
+[![video](asciicast.gif)](https://asciinema.org/a/95368)
