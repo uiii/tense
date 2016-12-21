@@ -39,22 +39,27 @@ class ExampleTest extends PHPUnit\Framework\TestCase {
 
 PW-Test is configured to test `ProcessWire` versions `2.5`, `2.7` and `3.0`. In this case no files are copied into ProcessWire installation.
 
-**pw-test.json**
-```json
-{
-	"tmpDir": ".pw-test",
-	"db": {
-		"host": "localhost",
-		"port": 3306,
-		"user": "root",
-		"pass": "",
-		"name": "pw_test"
-	},
-	"testTags": ["2.5", "2.7", "3.0"],
-	"copySources": {},
-	"testCmd": "vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php",
-	"waitAfterTests": "never"
-}
+**pw-test.yml**
+```yaml
+tmpDir: .pw-test
+
+db:
+	host: localhost
+	port: 8001 #3306
+	user: root
+	pass: ""
+	name: "pw_test"
+
+testTags:
+	- "2.5"
+	- "2.7"
+	- "3.0"
+
+copySources: []
+
+testCmd: "../vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php"
+
+waitAfterTests: never
 ```
 
 ## How to run

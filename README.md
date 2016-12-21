@@ -57,7 +57,7 @@ composer require --dev uiii/pw-test:dev-master
 
 Go to your **project's root** directory.
 
-[Create config](#configuration) file `pw-test.json`,
+[Create config](#configuration) file `pw-test.yml`,
 
 then if you installed `PW-Test` globally:
 ```
@@ -71,7 +71,7 @@ vendor/bin/pw-test
 
 ## Configuration
 
-Copy example configuration [`pw-test.json`](pw-test.json) to your project's root directory and set options according to your needs.
+PW-Test uses [YAML](http://yaml.org/) configuration files. Copy [`pw-test.yml`](pw-test.yml) to your project's root directory and set options according to your needs.
 
 ### tmpDir
 Path to a directory where are stored files needed for testing
@@ -91,14 +91,13 @@ must have the privileges to create a database.
 > `db.name` is a name of the database.
 
 *Example:*
-```json
-"db": {
-	"host": "localhost",
-	"port": 3306,
-	"user": "root",
-	"pass": "",
-	"name": "pw_test"
-}
+```yaml
+db:
+	host: localhost
+	port: 3306
+	user: root
+	pass: ""
+	name: pw_test
 ```
 
 ### testTags
@@ -112,42 +111,47 @@ Versions are tested in the specified order.
 
 > Minimal supported version is `2.5`.
 
-> Version `2.8` currently not supported.
+> Version `2.8` is not currently supported.
 
 *Example:*
-```json
-"testTags": ["2.5", "2.6", "2.7.1", "3.0"]
+```yaml
+testTags:
+	- "2.5"
+	- "2.6"
+	- "2.7.1"
+	- "3.0"
 ```
 
 ### copySources
-Copy tested project source files to specified
-destinations in ProcessWire installation.
+Copy source files into ProcessWire's' installation before testing.
 
-> Destination paths are relative to ProcessWire
-installation root.
+It is a list of objects with `destination` and `source` properties.
+
+> Destination paths are relative to ProcessWire's installation root.
 
 > Source paths are relative to the config file's parent directory.
 
-Sources can be either array or a single string.
-If array of sources is specified, the destination
-is considered a directory where all sources are copied.
-If single string source is specified, one to one copy is used.
+Sources can either be a single string or an array of strings.
+If the source is a string, file to file copy is used.
+If the source is an array of strings, the destination
+is considered to be a directory where all sources are copied into.
 
 > If source item is a directory, it will be copied recursively.
 
 *Example:*
 
-```json
-"copySources": {
-	"site/templates/HomeTemplate.php": "templates/home.php",
-	"site/modules/Module": [
-		"Libs",
-		"Module.module"
-	]
-}
+```yaml
+copySources:
+	- destination: "site/templates/HomeTemplate.php"
+	source: "src/templates/home.php"
+
+	- destination: "site/modules/Module"
+	source:
+		- "Libs"
+		- "Module.module"
 ```
 
-Consider `pw-test.json` is in project's root and `<project-root>/Libs` is a directory. In this example these files will be copied:
+Consider `pw-test.yml` is in project's root and `<project-root>/Libs` is a directory. In this example these files will be copied:
 - `<project-root>/templates/home.php` to `<pw-path>/site/templates/HomeTemplate.php`
 - `<project-root>/Libs/*` to `<pw-path>/site/modules/Module/Libs`
 - `<project-root>/Module.module` to `<pw-path>/site/modules/Module/Module.module`
@@ -158,8 +162,8 @@ Command to execute a test suite.
 > Path to the ProcessWire installation will be in `PW_PATH` environment variable.
 
 *Example:*
-```json
-"testCmd": "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
+```yaml
+testCmd: "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
 ```
 
 ### waitAfterTests

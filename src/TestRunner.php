@@ -29,26 +29,24 @@ namespace PWTest;
 require_once __DIR__ . '/Helper/Log.php';
 require_once __DIR__ . '/Helper/Path.php';
 require_once __DIR__ . '/Helper/Cmd.php';
+require_once __DIR__ . '/Config.php';
 require_once __DIR__ . '/Installer.php';
-
-use t1st3\JSONMin\JSONMin;
 
 use PWTest\Helper\Log;
 use PWTest\Helper\Path;
 use PWTest\Helper\Cmd;
 
-class TestRunner
-{
+class TestRunner {
 	const ACTION_CONTINUE = "Continue";
 	const ACTION_STOP = "Stop";
 	const ACTION_REPEAT = "Repeat";
 
 	protected $installer;
 
-	public function __construct($configFile) {
+	public function __construct($workingDir) {
 		Log::info("Initializing ...");
 
-		$this->config = $this->loadConfig($configFile);
+		$this->config = new Config(Path::join($workingDir, "pw-test.yml"), $workingDir);
 		$this->installer = new Installer($this->config);
 	}
 
@@ -66,57 +64,10 @@ class TestRunner
 		}
 	}
 
-	protected function loadConfig($configFile) {
-		if (! file_exists($configFile)) {
-			Log::error("Missing config! Please, create pw-test.json config file.");
-			die();
-		}
-
-		$defaultConfigFile = Path::join(__DIR__, '../pw-test.json');
-		$defaultConfig = json_decode(JSONMin::minify(file_get_contents($defaultConfigFile)), true);
-		$config = json_decode(JSONMin::minify(file_get_contents($configFile)), true);
-
-		$config = json_decode(json_encode(array_replace_recursive($defaultConfig, $config)));
-
-		// fix: when the copySources option is empty object
-		// it is decoded as an empty array but must be an object
-		if (! $config->copySources) {
-			$config->copySources = new \stdClass;
-		}
-
-		$validator = new \JsonSchema\Validator;
-		$validator->check($config, (object)['$ref' => 'file://' . Path::join(__DIR__, 'file/config_schema.json')]);
-
-		if (! $validator->isValid()) {
-			$errorMessages = [];
-			foreach ($validator->getErrors() as $error) {
-				array_push($errorMessages, sprintf("%s: %s", $error['property'], $error['message']));
-			}
-
-			Log::error(sprintf(
-				"Configuration file contains errors:%s%s",
-				PHP_EOL,
-				implode(PHP_EOL, $errorMessages)
-			));
-
-			die();
-		}
-
-		$config->_file = $configFile;
-
-		// absolutize tmpDir
-		if (! Path::isAbsolute($config->tmpDir)) {
-			// make the tmpDir relative to the directory where the config file is stored
-			$config->tmpDir = Path::join(dirname($configFile), trim($config->tmpDir));
-		}
-
-		return $config;
-	}
-
 	protected function testProcessWire($tagName) {
 		Log::info(PHP_EOL . "::: Testing against ProcessWire $tagName :::" . PHP_EOL);
 
-		$processWirePath = Path::join($this->config->tmpDir, "pw");
+		$processWirePath = Path::join($this->config->workingDir, $this->config->tmpDir, "pw");
 		$testSuccess = false;
 
 		try {
@@ -144,13 +95,13 @@ class TestRunner
 					$source = trim($source);
 
 					Path::copy(
-						Path::join(dirname($this->config->_file), $source),
+						Path::join(dirname($this->config->workingDir), $source),
 						Path::join($processWirePath, trim($destination), basename($source))
 					);
 				}
 			} else {
 				Path::copy(
-					Path::join(dirname($this->config->_file), trim($sources)),
+					Path::join(dirname($this->config->workingDir), trim($sources)),
 					Path::join($processWirePath, $destination)
 				);
 			}
@@ -164,7 +115,7 @@ class TestRunner
 
 		if (strpbrk($cmdExecutable, "/\\") !== false) {
 			// cmd executable is a path, so make it absolute
-			$cmdExecutable = Path::join(dirname($this->config->_file), $cmdExecutable);
+			$cmdExecutable = Path::join($this->config->workingDir, $cmdExecutable);
 		}
 
 		$env = [

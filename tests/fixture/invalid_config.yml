@@ -1,0 +1,20 @@
+tmpDir: ""
+
+db:
+    host: 1
+    port: "a"
+    user:
+    pass: 1
+    name: 1
+
+testTags: [1, 2.5]
+
+copySources:
+    - "a"
+    - ["a", "b"]
+    - destination: "a"
+    - source: "a"
+
+testCmd: ""
+
+waitAfterTests: "a"

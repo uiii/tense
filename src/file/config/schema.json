@@ -1,0 +1,82 @@
+{
+	"$schema": "http://json-schema.org/schema#",
+
+	"type": "object",
+
+	"properties": {
+		"tmpDir": {
+			"type": "string",
+			"minLength": 1
+		},
+
+		"db": {
+			"type": "object",
+			"properties": {
+				"host": { "type": "string" },
+				"port": { "type": "number" },
+				"user": { "type": "string" },
+				"pass": { "type": "string" },
+				"name": { "type": "string" }
+			}
+		},
+
+		"testTags": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		},
+
+		"copySources": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"destination": {
+						"type": "string",
+						"minLength": 1
+					},
+					"source": {
+						"oneOf": [
+							{
+								"type": "string",
+								"minLength": 1
+							},
+							{
+								"type": "array",
+								"items": {
+									"type": "string",
+									"minLength": 1
+								},
+								"minItems": 1
+							}
+						]
+					}
+				},
+				"required": [
+					"destination",
+					"source"
+				]
+			}
+		},
+
+		"testCmd": {
+			"type": "string"
+		},
+
+		"waitAfterTests": {
+			"type": "string",
+			"enum": ["never", "onFailure", "always"]
+		}
+	},
+
+	"required": [
+		"tmpDir",
+		"db",
+		"testTags",
+		"copySources",
+		"testCmd",
+		"waitAfterTests"
+	]
+}

@@ -20,7 +20,5 @@ require __DIR__ . '/src/TestRunner.php';
 
 PWTest\Helper\Log::$level = 3;
 
-$configFile = PWTest\Helper\Path::join(getcwd(), 'pw-test.json');
-
-$testRunner = new PWTest\TestRunner($configFile);
+$testRunner = new PWTest\TestRunner(getcwd());
 $testRunner->run();

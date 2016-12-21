@@ -1,0 +1,34 @@
+{
+    "tmpDir": ".pw-test",
+
+    "db": {
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "pass": "",
+        "name": "pw_test"
+    },
+
+    "testTags": [
+        "2.7",
+        "3.0"
+    ],
+
+    "copySources": [
+        {
+            "destination": "site/modules/Module",
+            "source": [
+                "Module.module",
+                "file.php"
+            ]
+        },
+        {
+            "destination": "site/template/template.php",
+            "source": "template.php"
+        }
+    ],
+
+    "testCmd": "vendor/bin/phpunit",
+
+    "waitAfterTests": "never"
+}

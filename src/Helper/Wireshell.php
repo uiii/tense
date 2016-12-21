@@ -53,11 +53,13 @@ abstract class Wireshell {
 			throw new \RuntimeException("Wireshell (needed for ProcessWire installation) doesn't support version $tag->name.");
 		}
 
+		$tmpDir = Path::join($config->workingDir, $config->tmpDir);
+
 		// install required wireshell version if not installed
-		$wireshellPath = self::installSelf($version, $config->tmpDir);
+		$wireshellPath = self::installSelf($version, $tmpDir);
 
 		// download PW source if missing
-		$pwZipPath = self::downloadProcessWire($tag, $config->tmpDir);
+		$pwZipPath = self::downloadProcessWire($tag, $tmpDir);
 
 		// install PW
 		Log::info("Installing ProcessWire $tag->name ...");

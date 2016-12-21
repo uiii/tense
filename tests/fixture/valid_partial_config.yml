@@ -1,0 +1,13 @@
+testTags:
+    - "2.7"
+    - "3.0"
+
+copySources:
+    - destination: "site/modules/Module"
+      source:
+          - "Module.module"
+          - "file.php"
+    - destination: "site/template/template.php"
+      source: "template.php"
+
+testCmd: "vendor/bin/phpunit"
