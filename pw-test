@@ -3,15 +3,15 @@
 <?php
 
 $autoloadPaths = [
-    __DIR__ . '/vendor/autoload.php',
-    __DIR__ . '/../../autoload.php'
+	__DIR__ . '/vendor/autoload.php',
+	__DIR__ . '/../../autoload.php'
 ];
 
 foreach ($autoloadPaths as $path) {
-    if (file_exists($path)) {
-        require_once $path;
-        break;
-    }
+	if (file_exists($path)) {
+		require_once $path;
+		break;
+	}
 }
 
 require __DIR__ . '/src/Helper/Log.php';
@@ -21,4 +21,8 @@ require __DIR__ . '/src/TestRunner.php';
 PWTest\Helper\Log::$level = 3;
 
 $testRunner = new PWTest\TestRunner(getcwd());
-$testRunner->run();
+$success = $testRunner->run();
+
+if (! $success) {
+	exit(1);
+}

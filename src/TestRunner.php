@@ -51,17 +51,21 @@ class TestRunner {
 	}
 
 	public function run() {
-		foreach($this->config->testTags as $tagName) {
-			$nextAction = $this->testProcessWire($tagName);
+		$success = true;
 
-			while ($nextAction === self::ACTION_REPEAT) {
-				$nextAction = $this->testProcessWire($tagName);
-			}
+		foreach($this->config->testTags as $tagName) {
+			do {
+				list($testSuccess, $nextAction) = $this->testProcessWire($tagName);
+			} while ($nextAction === self::ACTION_REPEAT);
+
+			$success = $success && $testSuccess;
 
 			if ($nextAction === self::ACTION_STOP) {
 				break;
 			}
 		}
+
+		return $success;
 	}
 
 	protected function testProcessWire($tagName) {
@@ -79,13 +83,13 @@ class TestRunner {
 			Log::error($e->getMessage() . PHP_EOL);
 		}
 
-		$action = $this->askForAction($testSuccess, $processWirePath);
+		$nextAction = $this->askForAction($testSuccess, $processWirePath);
 
-		Log::info(sprintf("Clean up & %s", $action));
+		Log::info(sprintf("Clean up & %s", $nextAction));
 
 		$this->installer->uninstallProcessWire($processWirePath);
 
-		return $action;
+		return [$testSuccess, $nextAction];
 	}
 
 	protected function copySourceFiles($processWirePath) {
