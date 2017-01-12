@@ -1,5 +1,7 @@
 # PW-Test
 
+> Project is still in **early development** and may change a lot.
+
 Command-line tool to easily run tests agains multiple versions of [ProcessWire CMF](https://processwire.com).
 
 Are you building a module, or a template and you need to make sure it works in all supported ProcessWire versions?
