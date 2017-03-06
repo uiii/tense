@@ -1,6 +1,6 @@
-# PW-Test Example
+# Tense Example
 
-In [example](https://github.com/uiii/pw-test/tree/master/example) directory you can find an example test suite.
+In [example](https://github.com/uiii/tense/tree/master/example) directory you can find an example test suite.
 
 ## Test suite
 
@@ -35,20 +35,20 @@ class ExampleTest extends PHPUnit\Framework\TestCase {
 }
 ```
 
-## PW-Test configuration
+## Tense configuration
 
-PW-Test is configured to test `ProcessWire` versions `2.5`, `2.7` and `3.0`. In this case no files are copied into ProcessWire installation.
+Tense is configured to test `ProcessWire` versions `2.5`, `2.7` and `3.0`. In this case no files are copied into ProcessWire installation.
 
-**pw-test.yml**
+**tense.yml**
 ```yaml
-tmpDir: .pw-test
+tmpDir: .tense
 
 db:
 	host: localhost
-	port: 8001 #3306
+	port: 3306
 	user: root
 	pass: ""
-	name: "pw_test"
+	name: tense
 
 testTags:
 	- "2.5"
@@ -64,15 +64,15 @@ waitAfterTests: never
 
 ## How to run
 
-1. Look at the `db` section in `pw-test.json` configuration and update it if necessary.
+1. Look at the `db` section in `tense.yml` configuration and update it if necessary.
 2. Make sure MySQL is running and corresponds with the configuration.
-3. In `PW-Test` **root** directory run:
+3. In `Tense` **root** directory run:
 ```
 composer install
 ```
 4. In `example` directory run:
 ```
-php ../pw-test
+php ../tense
 ```
 
 ## Output

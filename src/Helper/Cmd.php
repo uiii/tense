@@ -24,11 +24,17 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest\Helper;
+namespace Tense\Helper;
 
-require_once __DIR__ . '/Log.php';
+use Tense\Helper\Path;
+use Tense\Helper\Log;
+use Tense\Console\Output;
+
+use Symfony\Component\Console\Output\OutputInterface;
 
 class CmdException extends \RuntimeException {
+	protected $result;
+
 	public function __construct($result) {
 		$message = $result ? implode(PHP_EOL, (array) $result->output) : "unknown error";
 		parent::__construct($message);
@@ -46,11 +52,16 @@ abstract class Cmd {
 		'cwd' => null,
 		'env' => null,
 		'throw_on_error' => true,
-		'print_output' => false
+		'print_prefix' => ""
 	];
 
-	public static function run($command, $args = [], $options = []) {
+	public static function run($command, $args = [], $options = [], Output $outputWriter = null) {
 		$options = array_merge(self::$defaultOptions, $options);
+
+		if (strpbrk($command, "/\\") !== false) {
+			// command executable is a path, so make it absolute
+			$command = Path::join($options['cwd'] ?: getcwd(), $command);
+		}
 
 		$commandString = sprintf("%s %s 2>&1", $command, implode(' ', $args));
 
@@ -63,7 +74,7 @@ abstract class Cmd {
 			$options['env'] = array_merge(self::getEnv(), $options['env']);
 		}
 
-		Log::debug(sprintf("Running command: %s", $commandString));
+		Log::info(sprintf("Running command: %s", $commandString));
 
 		$process = proc_open($commandString, $descriptorspec, $pipes, $options['cwd'], $options['env']);
 
@@ -71,10 +82,7 @@ abstract class Cmd {
 			throw new CmdException(null);
 		}
 
-		if ($options['print_output']) {
-			echo "> ";
-		}
-
+		$previousCharacter = null;
 		$line = "";
 		$output = [];
 
@@ -93,13 +101,15 @@ abstract class Cmd {
 				$line = "";
 			}
 
-			if ($options['print_output']) {
-				echo $char;
-
-				if ($eol) {
-					echo "> ";
+			if ($outputWriter && $char !== false) {
+				if (is_null($previousCharacter) || $previousCharacter === "\n") {
+					$outputWriter->write($options['print_prefix']);
 				}
+
+				$outputWriter->write($char, false, OutputInterface::OUTPUT_RAW);
 			}
+
+			$previousCharacter = $char;
 		}
 
 		fclose($pipes[1]);
@@ -110,7 +120,7 @@ abstract class Cmd {
 		$result->exitCode = $exitCode;
 		$result->output = $output;
 
-		Log::debug(sprintf("Command output: %s", implode("\n", $output)));
+		Log::debug(sprintf("Command output:%s%s", PHP_EOL, implode(PHP_EOL, $output)));
 		Log::debug(sprintf("Command exit code: %s", $exitCode));
 
 		if ($exitCode !== 0 && $options['throw_on_error']) {
@@ -121,12 +131,16 @@ abstract class Cmd {
 	}
 
 	/**
-	* Get environment variables
+	* Get all environment variables or
+	* a value of specified variable.
 	*
 	* Using workaround because $_ENV could be empty
 	* (depends on variables_order directive in PHP.ini)
+	*
+	* @param string $variable (optional) Variable name
+	* @return array|string
 	*/
-	public static function getEnv() {
+	public static function getEnv($variable = null) {
 		$cmd = preg_match("/WIN/Ai", PHP_OS) ? 'set' : 'printenv';
 		$output = self::run($cmd)->output;
 
@@ -134,6 +148,11 @@ abstract class Cmd {
 
 		foreach ($output as $line) {
 			list($key, $value) = explode("=", $line, 2);
+
+			if ($variable && strtolower($key) === strtolower($variable)) {
+				return $value;
+			}
+
 			$env[$key] = $value;
 		}
 

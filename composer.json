@@ -1,5 +1,5 @@
 {
-    "name": "uiii/pw-test",
+    "name": "uiii/tense",
     "description": "Easy testing against multiple versions of ProcessWire CMF",
     "keywords": ["processwire", "testing"],
     "type": "project",
@@ -11,12 +11,18 @@
         }
     ],
     "bin": [
-        "pw-test"
+        "tense"
     ],
+    "autoload": {
+        "psr-4": {
+            "Tense\\": "src/"
+        }
+    },
     "require": {
         "php": ">=5.6",
         "justinrainbow/json-schema": "^4.0",
-        "symfony/yaml": "^3.2"
+        "symfony/yaml": "^3.2",
+        "symfony/console": "^3.2"
     },
     "require-dev": {
         "nette/tester": "^1.7",

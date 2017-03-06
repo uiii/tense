@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest\Helper;
+namespace Tense\Helper;
 
-require_once __DIR__ . '/Log.php';
+use Tense\Helper\Log;
 
 abstract class Url {
 	public static function get($url, $outputFile = null) {
-		Log::debug(sprintf("Downloading URL: %s", $url));
+		Log::info(sprintf("Downloading URL: %s", $url));
 		Log::debug(sprintf("To file: %s", $outputFile));
 
 		$curl = curl_init();
@@ -39,7 +39,7 @@ abstract class Url {
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($curl, CURLOPT_USERAGENT, 'uiii/pw-test');
+		curl_setopt($curl, CURLOPT_USERAGENT, 'uiii/tense');
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
 		if ($outputFile) {

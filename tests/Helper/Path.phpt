@@ -7,7 +7,7 @@ require_once SRC_DIR . "/Helper/Path.php";
 define("DS", DIRECTORY_SEPARATOR);
 
 use Tester\Assert;
-use PWTest\Helper\Path;
+use Tense\Helper\Path;
 
 Assert::same(Path::join("a\\", "b", "c"), "a" . DS . "b" . DS . "c");
 Assert::same(Path::join("a/", "\b/", "c"), "\b" . DS . "c");

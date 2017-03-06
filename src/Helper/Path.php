@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest\Helper;
+namespace Tense\Helper;
 
 require_once __DIR__ . '/Log.php';
 
@@ -46,16 +46,19 @@ abstract class Path {
 	}
 
 	public static function copy($source, $destination) {
+		Log::info(sprintf("Copy: %s", $source));
+		Log::info(sprintf("To: %s", $destination));
+
 		if (is_file($source)) {
-			Log::debug(sprintf("Copy file: %s", $source), 1);
-			Log::debug(sprintf("To file:   %s", $destination), 1);
+			Log::debug(sprintf("Copy file: %s", $source));
+			Log::debug(sprintf("To file:   %s", $destination));
 
 			copy($source, $destination);
 
 			return;
 		}
 
-		Log::debug(sprintf("Create directory: %s", $destination), 1);
+		Log::debug(sprintf("Create directory: %s", $destination));
 		mkdir($destination, 0777, true);
 
 		$directoryIterator = new \RecursiveDirectoryIterator(
@@ -68,15 +71,15 @@ abstract class Path {
 			if ($item->isDir()) {
 				$directoryPath = self::join($destination, $recursiveIterator->getSubPathName());
 
-				Log::debug(sprintf("Create directory: %s", $directoryPath), 1);
+				Log::debug(sprintf("Create directory: %s", $directoryPath));
 
 				mkdir($directoryPath, 0777);
 			} else {
 				$sourceFilePath = $item->getPathname();
 				$destinationFilePath = self::join($destination, $recursiveIterator->getSubPathName());
 
-				Log::debug(sprintf("Copy file: %s", $sourceFilePath), 1);
-				Log::debug(sprintf("To file:   %s", $destinationFilePath), 1);
+				Log::debug(sprintf("Copy file: %s", $sourceFilePath));
+				Log::debug(sprintf("To file:   %s", $destinationFilePath));
 
 				copy($sourceFilePath, $destinationFilePath);
 			}
@@ -84,8 +87,10 @@ abstract class Path {
 	}
 
 	public static function remove($path) {
+		Log::info(sprintf("Remove: %s", $path));
+
 		if (is_file($path)) {
-			Log::debug(sprintf("Remove file: %s", $path), 1);
+			Log::debug(sprintf("Remove file: %s", $path));
 
 			unlink($path);
 
@@ -102,17 +107,17 @@ abstract class Path {
 			$itemPath = $item->getPathname();
 
 			if ($item->isDir() && ! $item->isLink()) {
-				Log::debug(sprintf("Remove directory: %s", $itemPath), 1);
+				Log::debug(sprintf("Remove directory: %s", $itemPath));
 
 				rmdir($itemPath);
 			} else {
-				Log::debug(sprintf("Remove file: %s", $itemPath), 1);
+				Log::debug(sprintf("Remove file: %s", $itemPath));
 
 				unlink($itemPath);
 			}
 		}
 
-		Log::debug(sprintf("Remove directory: %s", $path), 1);
+		Log::debug(sprintf("Remove directory: %s", $path));
 		rmdir($path);
 	}
 }

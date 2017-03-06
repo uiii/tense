@@ -24,45 +24,34 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest\Helper;
+namespace Tense\Helper;
+
+use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class Log {
-	/**
-	* Log level
-	*
-	* 0 - quiet (no output)
-	* 1 - errors only
-	* 2 - errors & warnings
-	* 3 - errors & warnings & info (default)
-	* 4 - debug (all)
-	**/
-	public static $level = 3;
+	protected static $output;
 
-	public static function error($message) {
-		self::write(1, $message, "[ERROR]");
-	}
-
-	public static function warn($message) {
-		self::write(2, $message, "[WARNING]");
+	public static function setOutput(OutputInterface $output) {
+		self::$output = $output;
 	}
 
 	public static function info($message) {
-		self::write(3, $message);
+		self::write(OutputInterface::VERBOSITY_VERY_VERBOSE, $message, "[INFO]");
 	}
 
-	public static function debug($message, $debugLevel = 0) {
-		self::write(4 + $debugLevel, $message, "[DEBUG]");
+	public static function debug($message) {
+		self::write(OutputInterface::VERBOSITY_DEBUG, $message, "[DEBUG]");
 	}
 
-	protected static function write($minLevel, $message, $prefix = "") {
-		if (self::$level < $minLevel) {
+	protected static function write($verbosity, $message, $prefix) {
+		if (! self::$output) {
 			return;
 		}
 
-		if ($prefix) {
-			$prefix .= " ";
+		if (self::$output->getVerbosity() < $verbosity) {
+			return;
 		}
 
-		echo sprintf("%s%s" . PHP_EOL, $prefix, $message);
+		self::$output->writeln(sprintf("<debug>%s</debug> %s", $prefix, $message));
 	}
 }

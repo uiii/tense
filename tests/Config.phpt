@@ -6,20 +6,20 @@ require_once SRC_DIR . "/Helper/Path.php";
 require_once SRC_DIR . "/Config.php";
 
 use Tester\Assert;
-use PWTest\Helper\Path;
-use PWTest\Config;
+use Tense\Helper\Path;
+use Tense\Config;
 
 class ConfigTest extends Tester\TestCase {
 	public function testNonExisting() {
 		$e = Assert::exception(function() {
-			new Config(Path::join(FIXTURE_DIR, "non-existing.yml"), FIXTURE_DIR);
-		}, 'PWTest\MissingConfigException');
+			new Config(Path::join(FIXTURE_DIR, "non-existing.yml"));
+		}, 'Tense\MissingConfigException');
 	}
 
 	public function testInvalid() {
 		$e = Assert::exception(function() {
-			new Config(Path::join(FIXTURE_DIR, "invalid_config.yml"), FIXTURE_DIR);
-		}, 'PWTest\InvalidConfigException');
+			new Config(Path::join(FIXTURE_DIR, "invalid_config.yml"));
+		}, 'Tense\InvalidConfigException');
 
 		$invalidProperties = array_map(function($error) {
 			return $error['property'];
@@ -39,7 +39,7 @@ class ConfigTest extends Tester\TestCase {
 	}
 
 	public function testValidPartial() {
-		$config = new Config(Path::join(FIXTURE_DIR, "valid_partial_config.yml"), FIXTURE_DIR);
+		$config = new Config(Path::join(FIXTURE_DIR, "valid_partial_config.yml"));
 		$expected = json_decode(file_get_contents(Path::join(FIXTURE_DIR, "valid_partial_config.json")));
 
 		foreach ($expected as $key => $value) {
@@ -48,7 +48,7 @@ class ConfigTest extends Tester\TestCase {
 	}
 
 	public function testValidFull() {
-		$config = new Config(Path::join(FIXTURE_DIR, "valid_full_config.yml"), FIXTURE_DIR);
+		$config = new Config(Path::join(FIXTURE_DIR, "valid_full_config.yml"));
 		$expected = json_decode(file_get_contents(Path::join(FIXTURE_DIR, "valid_full_config.json")));
 
 		foreach ($expected as $key => $value) {
@@ -60,4 +60,4 @@ class ConfigTest extends Tester\TestCase {
 $testCase = new ConfigTest;
 $testCase->run();
 
-//Assert::equal($config->tmpDir, ".pw-test");
+//Assert::equal($config->tmpDir, ".tense");

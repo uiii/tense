@@ -24,41 +24,40 @@
  * THE SOFTWARE.
  */
 
-namespace Tense\Helper;
+namespace Tense\Command;
 
-require_once __DIR__ . '/Cmd.php';
+use Tense\Console\BoxOutputFormatterStyle;
+use Tense\Console\Output;
+use Tense\Console\OutputFormatter;
+use Tense\Console\QuestionHelper;
+use Tense\Helper\Path;
+use Tense\TestRunner;
 
-abstract class Git {
-	public static function cloneRepo($repoUrl, $repoPath) {
-		Cmd::run("git", ["clone", $repoUrl, $repoPath]);
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class RunCommand extends Command
+{
+	protected function configure()
+	{
+		$this
+			->setName('run')
+			->setDescription('Run tests');
 	}
 
-	public static function checkout($repoPath, $target) {
-		Cmd::run("git", ["checkout", "-f", $target], ['cwd' => $repoPath]);
-	}
+	protected function execute(InputInterface $input, OutputInterface $output)
+	{
+		$output->setFormatter(new OutputFormatter($output->isDecorated()));
 
-	public static function apply($repoPath, $patchPath) {
-		Cmd::run("git", ["apply", $patchPath], ['cwd' => $repoPath]);
-	}
+		$configFilePath = Path::join(getcwd(), "tense.yml");
+		$questionHelper = new QuestionHelper($input, $output);
 
-	public static function getTags($repo) {
-		$repoUrl = "https://github.com/$repo";
+		$output->writeln($this->getApplication()->getLogo());
+		$output->writeln("");
 
-		$result = Cmd::run("git", ["ls-remote", "--tags", "--refs", $repoUrl]);
-
-		$tags = [];
-
-		foreach (array_reverse($result->output) as $line) {
-			list($sha, $ref) = explode("\t", $line);
-
-			$tag = new \stdClass;
-			$tag->name = explode('/', $ref)[2];
-			$tag->sha = $sha;
-			$tag->zip = $repoUrl . "/archive/$sha.zip";
-
-			array_push($tags, $tag);
-		}
-
-		return $tags;
+		$runner = new TestRunner($configFilePath, $output, $questionHelper);
+		return $runner->run();
 	}
 }

@@ -24,12 +24,12 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest;
+namespace Tense;
 
 require_once __DIR__ . '/Helper/Path.php';
 
 use Symfony\Component\Yaml\Yaml;
-use PWTest\Helper\Path;
+use Tense\Helper\Path;
 
 class MissingConfigException extends \RuntimeException {
 	protected $filePath;
@@ -84,8 +84,8 @@ class InvalidConfigException extends \RuntimeException {
 class Config {
 	protected $config;
 
-	public function __construct($configFilePath, $workingDir) {
-		$this->config = $this->load($configFilePath, $workingDir);
+	public function __construct($configFilePath) {
+		$this->config = $this->load($configFilePath);
 	}
 
 	public function __get($name) {
@@ -96,8 +96,8 @@ class Config {
 		throw new \Exception("Configuration key '$name' doesn't exist.");
 	}
 
-	public function load($configFilePath, $workingDir) {
-		$defaultConfigFilePath = Path::join(__DIR__, "..", "pw-test.yml");
+	public function load($configFilePath) {
+		$defaultConfigFilePath = Path::join(__DIR__, "..", "tense.yml");
 
 		if (! file_exists($configFilePath)) {
 			throw new MissingConfigException($configFilePath);
@@ -113,7 +113,7 @@ class Config {
 
 		$this->validate($config, Path::join(__DIR__, 'file', 'config', 'schema.json'));
 
-		$config->workingDir = $workingDir;
+		$config->workingDir = dirname($configFilePath);
 
 		return $config;
 	}

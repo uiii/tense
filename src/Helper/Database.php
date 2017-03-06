@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest\Helper;
+namespace Tense\Helper;
 
 require_once __DIR__ . '/Cmd.php';
 

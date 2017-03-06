@@ -24,18 +24,24 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest\Helper;
+namespace Tense;
 
-require_once __DIR__ . '/Log.php';
-require_once __DIR__ . '/Path.php';
-require_once __DIR__ . '/Git.php';
-require_once __DIR__ . '/Url.php';
-require_once __DIR__ . '/Cmd.php';
+use Tense\Helper\Path;
+use Tense\Helper\Git;
+use Tense\Helper\Url;
+use Tense\Helper\Cmd;
+use Tense\Helper\CmdException;
 
-abstract class Wireshell {
+use Tense\Console\Output;
+
+use Symfony\Component\Console\Output\OutputInterface;
+
+class WireshellException extends \RuntimeException {}
+
+class Wireshell {
 	public static $githubUrl = "https://github.com/wireshell/wireshell";
 
-	protected static $wireshellVersions = [
+	protected $wireshellVersions = [
 		"2f62313" => ["supportsPW" => ["/^3/"]],
 		"0.6.0" => [
 			"supportsPW" => ["/^2.[4-7](\..*)?$/"],
@@ -46,8 +52,14 @@ abstract class Wireshell {
 		]
 	];
 
-	public static function installProcessWire($tag, $installPath, $config) {
-		$version = self::getRequiredVersion($tag->name);
+	protected $output;
+
+	public function __construct(OutputInterface $output) {
+		$this->output = $output;
+	}
+
+	public function installProcessWire($tag, $installPath, $config) {
+		$version = $this->getRequiredVersion($tag->name);
 
 		if (! $version) {
 			throw new \RuntimeException("Wireshell (needed for ProcessWire installation) doesn't support version $tag->name.");
@@ -56,13 +68,13 @@ abstract class Wireshell {
 		$tmpDir = Path::join($config->workingDir, $config->tmpDir);
 
 		// install required wireshell version if not installed
-		$wireshellPath = self::installSelf($version, $tmpDir);
+		$wireshellPath = $this->installSelf($version, $tmpDir);
 
 		// download PW source if missing
-		$pwZipPath = self::downloadProcessWire($tag, $tmpDir);
+		$pwZipPath = $this->downloadProcessWire($tag, $tmpDir);
 
 		// install PW
-		Log::info("Installing ProcessWire $tag->name ...");
+		$this->output->write("<info>Installing ProcessWire $tag->name ... </info>", false, Output::MESSAGE_TEMPORARY);
 
 		$wireshellArgs = [
 			"new",
@@ -79,29 +91,25 @@ abstract class Wireshell {
 			"--timezone Europe/Prague",
 			"--chmodDir 777",
 			"--chmodFile 666",
+			"--no-ansi",
 			$installPath
 		];
 
-		$result = Cmd::run("php $wireshellPath", $wireshellArgs);
-
-		// HACK: wireshell doesn't stop on error but print it
-		$errors = preg_grep("/ERROR/", $result->output);
-		if ($errors) {
-			$result->exitCode = 1;
-			$result->output = array_map(function ($error) {
-				return preg_replace("/^.*ERROR: (.*) \[\] \[\]$/", "$1", $error);
-			}, $errors);
-			throw new CmdException($result);
+		try {
+			$result = Cmd::run("php", array_merge([$wireshellPath], $wireshellArgs));
+			$this->checkErrorsInCmdResult($result);
+		} catch (CmdException $e) {
+			throw new WireshellException($this->getWireshellErrorMessage($e->getMessage()));
 		}
 
 		return $installPath;
 	}
 
-	protected static function downloadProcessWire($tag, $dir) {
+	protected function downloadProcessWire($tag, $dir) {
 		$zipPath = Path::join($dir, "pw-{$tag->name}.zip");
 
 		if (! file_exists($zipPath)) {
-			Log::info("Downloading ProcessWire $tag->name ...");
+			$this->output->write("<info>Downloading ProcessWire $tag->name ... </info>", false, Output::MESSAGE_TEMPORARY);
 
 			Url::get($tag->zip, $zipPath);
 		}
@@ -109,25 +117,25 @@ abstract class Wireshell {
 		return $zipPath;
 	}
 
-	protected static function installSelf($version, $installDir) {
+	protected function installSelf($version, $installDir) {
 		$installPath = Path::join($installDir, "wireshell-$version");
 
 		if (! file_exists($installPath)) {
-			Log::info("Downloading wireshell $version ...");
+			$this->output->write("<info>Downloading wireshell $version ... </info>", false, Output::MESSAGE_TEMPORARY);
 
 			// clone repo
 			Git::cloneRepo(self::$githubUrl, $installPath);
 
-			Log::info("Installing wireshell $version ...");
+			$this->output->write("<info>Installing wireshell $version ... </info>", false, Output::MESSAGE_TEMPORARY);
 
 			// switch to required version
 			Git::checkout($installPath, $version);
 
 			// apply patch if needed
-			$versionInfo = self::$wireshellVersions[$version];
+			$versionInfo = $this->wireshellVersions[$version];
 			$needsPatch = array_key_exists("needsPatch", $versionInfo) ? $versionInfo["needsPatch"] : null;
 			if ($needsPatch) {
-				$patchPath = Path::join(__DIR__, "../file/wireshell_$needsPatch");
+				$patchPath = Path::join(__DIR__, "file/wireshell_$needsPatch");
 				Git::apply($installPath, $patchPath);
 			}
 		}
@@ -139,8 +147,8 @@ abstract class Wireshell {
 		return Path::join($installPath, "wireshell");
 	}
 
-	protected static function getRequiredVersion($pwTag) {
-		foreach (self::$wireshellVersions as $wireshellVersion => $info) {
+	protected function getRequiredVersion($pwTag) {
+		foreach ($this->wireshellVersions as $wireshellVersion => $info) {
 			foreach ($info['supportsPW'] as $tagRegex) {
 				if (preg_match($tagRegex, $pwTag)) {
 					return $wireshellVersion;
@@ -151,4 +159,52 @@ abstract class Wireshell {
 		return null;
 	}
 
+	/**
+	* HACK: wireshell doesn't always stop on error but print it
+	*/
+	protected function checkErrorsInCmdResult($result) {
+		$errors = preg_grep("/ERROR/", $result->output);
+
+		if ($errors) {
+			$message = array_map(function ($error) {
+				return preg_replace("/^.*ERROR: (.*) \[\] \[\]$/", "$1", $error);
+			}, $errors);
+
+			$result->errorCode = 1;
+			$result->output = $message;
+
+			throw new CmdException($result);
+		}
+	}
+
+	/**
+	* Process wireshell error output.
+	* Extracts error message if possible.
+	*/
+	protected function getWireshellErrorMessage($wireshellOutput) {
+		$message = $wireshellOutput;
+
+		return $message;
+
+		// convert wireshell exception output to error message
+		$match = null;
+		if (preg_match("/\[[A-Za-z]+Exception\](.+)\R\R/s", $message, $match)) {
+			// Remove '[*Exception]' info
+			//$message = preg_replace("/^\s+\[[A-Za-z]+Exception\]/", "", $message);
+			//$message = trim($message);
+
+			$message = $match[1];
+
+			// Remove command usage info (separated from exception by multiple empty lines)
+			$message = substr($message, 0, strpos($message, PHP_EOL . PHP_EOL));
+			$message = trim($message);
+
+			// trim lines
+			$message = implode(PHP_EOL, array_map(function ($line) {
+				return trim($line);
+			}, explode(PHP_EOL, $message)));
+		}
+
+		return $message;
+	}
 }

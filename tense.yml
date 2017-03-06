@@ -3,7 +3,7 @@
 # (e.g ProcessWire installation, ...).
 #
 # Path is relative to the this file's parent directory.
-tmpDir: .pw-test
+tmpDir: .tense
 
 ##
 # Database connection parameters
@@ -16,7 +16,7 @@ db:
     port: 3306
     user: root
     pass: ""
-    name: pw_test # name of the database
+    name: tense # name of the database
 
 ##
 # List of ProcessWire tags/versions used for testing.

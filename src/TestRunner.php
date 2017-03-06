@@ -24,72 +24,117 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest;
+namespace Tense;
 
-require_once __DIR__ . '/Helper/Log.php';
-require_once __DIR__ . '/Helper/Path.php';
-require_once __DIR__ . '/Helper/Cmd.php';
-require_once __DIR__ . '/Config.php';
-require_once __DIR__ . '/Installer.php';
+use Tense\Helper\Path;
+use Tense\Helper\Cmd;
+use Tense\Console\Output;
+use Tense\Console\QuestionHelper;
 
-use PWTest\Helper\Log;
-use PWTest\Helper\Path;
-use PWTest\Helper\Cmd;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
 
 class TestRunner {
 	const ACTION_CONTINUE = "Continue";
 	const ACTION_STOP = "Stop";
 	const ACTION_REPEAT = "Repeat";
 
-	protected $installer;
+	const RESULT_PASS = "PASS";
+	const RESULT_FAILURE = "FAILURE";
 
-	public function __construct($workingDir) {
-		Log::info("Initializing ...");
+	protected $config;
 
-		$this->config = new Config(Path::join($workingDir, "pw-test.yml"), $workingDir);
-		$this->installer = new Installer($this->config);
+	protected $output;
+	protected $questionHelper;
+
+	public function __construct($configFilePath, OutputInterface $output, QuestionHelper $questionHelper) {
+		$this->output = $output;
+		$this->questionHelper = $questionHelper;
+
+		$this->config = new Config($configFilePath);
 	}
 
 	public function run() {
-		$success = true;
+		$results = array_combine(
+			$this->config->testTags,
+			array_fill(0, count($this->config->testTags), null)
+		);
 
-		foreach($this->config->testTags as $tagName) {
+		foreach ($this->config->testTags as $tagName) {
 			do {
-				list($testSuccess, $nextAction) = $this->testProcessWire($tagName);
+				list($testResult, $nextAction) = $this->testProcessWire($tagName);
 			} while ($nextAction === self::ACTION_REPEAT);
 
-			$success = $success && $testSuccess;
+			$results[$tagName] = $testResult;
 
 			if ($nextAction === self::ACTION_STOP) {
 				break;
 			}
 		}
 
-		return $success;
+		return $this->processResults($results);
+	}
+
+	protected function processResults($results) {
+		$this->output->writeln("<heading>:: Results ::</heading>");
+		$this->output->writeln("");
+
+		$passedCount = 0;
+		$failedCount = 0;
+		$skippedCount = 0;
+
+		foreach ($results as $tagName => $result) {
+			$format = $result === self::RESULT_PASS ? 'success' : ($result === self::RESULT_FAILURE ? 'error' : 'warning');
+			$this->output->writeln(sprintf("<info>%s: </info><%s>%s</%s> ", $tagName, $format, $result ?: 'SKIP', $format));
+
+			if ($result === self::RESULT_PASS) {
+				++$passedCount;
+			} elseif ($result === self::RESULT_FAILURE) {
+				++$failedCount;
+			} else {
+				++$skippedCount;
+			}
+		}
+
+		$this->output->writeln("");
+
+		if (count($results) === $passedCount) {
+			$this->output->writeln(sprintf("<success>OK (%s tested)</success>", count($results)));
+		} else {
+			$this->output->writeln(sprintf("<error>FAILURE (%s tested, %s passed, %s failed, %s skipped)</error>", count($results), $passedCount, $failedCount, $skippedCount));
+		}
+
+		return count($results) === $passedCount;
 	}
 
 	protected function testProcessWire($tagName) {
-		Log::info(PHP_EOL . "::: Testing against ProcessWire $tagName :::" . PHP_EOL);
+		$this->output->writeln("<heading>:: Testing against ProcessWire $tagName ::</heading>");
+		$this->output->writeln("");
 
 		$processWirePath = Path::join($this->config->workingDir, $this->config->tmpDir, "pw");
-		$testSuccess = false;
+		$testResult = self::RESULT_FAILURE;
+
+		$processWire = new ProcessWire($tagName, $this->config, $this->output);
 
 		try {
-			$this->installer->installProcessWire($tagName, $processWirePath);
+			$processWire->install($processWirePath);
 			$this->copySourceFiles($processWirePath);
 
-			$testSuccess = $this->runTests($processWirePath);
+			$testResult = $this->runTests($processWirePath);
 		} catch (\Exception $e) {
-			Log::error($e->getMessage() . PHP_EOL);
+			$this->output->writeln(sprintf("<error>%s</error>", trim($e->getMessage())));
+			$this->output->writeln("");
 		}
 
-		$nextAction = $this->askForAction($testSuccess, $processWirePath);
+		$nextAction = $this->askForAction($testResult, $processWirePath);
 
-		Log::info(sprintf("Clean up & %s", $nextAction));
+		$this->output->write("<info>Cleaning up ... </info>", false, Output::MESSAGE_TEMPORARY);
 
-		$this->installer->uninstallProcessWire($processWirePath);
+		$processWire->uninstall($processWirePath);
 
-		return [$testSuccess, $nextAction];
+		return [$testResult, $nextAction];
 	}
 
 	protected function copySourceFiles($processWirePath) {
@@ -113,98 +158,66 @@ class TestRunner {
 	}
 
 	protected function runTests($processWirePath) {
-		Log::info("Running tests ..." . PHP_EOL);
-
 		list($cmdExecutable, $args) = preg_split("/\s+/", trim($this->config->testCmd) . " ", 2);
 
-		if (strpbrk($cmdExecutable, "/\\") !== false) {
-			// cmd executable is a path, so make it absolute
-			$cmdExecutable = Path::join($this->config->workingDir, $cmdExecutable);
-		}
-
-		$env = [
-			"PW_PATH" => $processWirePath
-		];
-
 		$result = Cmd::run($cmdExecutable, preg_split("/\s+/", $args), [
-			'env' => $env,
+			'cwd' => $this->config->workingDir,
+			'env' => [
+				'PW_PATH' => $processWirePath
+			],
 			'throw_on_error' => false,
-			'print_output' => true
-		]);
+			'print_prefix' => "<comment>▌</comment> "
+		], $this->output);
 
-		Log::info(PHP_EOL);
+		$this->output->writeln("");
 
-		$success = $result->exitCode === 0;
-
-		if (! $success) {
-			Log::info("Tests failed" . PHP_EOL);
-		}
-
-		return $success;
+		return $result->exitCode === 0 ? self::RESULT_PASS : self::RESULT_FAILURE;
 	}
 
-	protected function askForAction($testSuccess, $processWirePath) {
+	protected function askForAction($testResult, $processWirePath) {
 		$waitAfterTests = $this->config->waitAfterTests;
 
 		$neverWait = $waitAfterTests === "never";
-		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $testSuccess;
+		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $testResult === self::RESULT_FAILURE;
 
 		if ($neverWait || $waitOnFailureButSuccess) {
 			return self::ACTION_CONTINUE;
 		}
 
-		Log::info(sprintf(
-			"Test runner is now halted (configured to wait after %s tests, see 'waitAfterTests' option)",
+		$this->output->writeln(sprintf(
+			"<comment>Test runner is now halted (configured to wait after %s tests, see 'waitAfterTests' option)</comment>",
 			$waitAfterTests === "always" ? "all" : "failed"
 		));
 
 		if ($processWirePath) {
-			Log::info("Tested ProcessWire instance is installed in '$processWirePath'");
+			$this->output->writeln("<comment>Tested ProcessWire instance is installed in '$processWirePath'</comment>");
 		}
 
-		$options = [
-			self::ACTION_CONTINUE => "Yes",
-			self::ACTION_STOP => "No"
-		];
+		$choices = array(
+			"y" => "yes",
+			"n" => "no"
+		);
 
-		$defaultAction = self::ACTION_CONTINUE;
+		$choiceActions = array(
+			"y" => self::ACTION_CONTINUE,
+			"n" => self::ACTION_STOP,
+		);
 
-		if (! $testSuccess) {
-			$options[self::ACTION_REPEAT] = "Repeat";
-			$defaultAction = self::ACTION_STOP;
+		if ($testResult === self::RESULT_FAILURE) {
+			$choices["r"] = "repeat";
+			$choiceActions["r"] = self::ACTION_REPEAT;
 		}
 
-		$selectedAction = null;
+		$question = new ChoiceQuestion(
+			"Do you want to continue?",
+			$choices,
+			$testResult === self::RESULT_PASS ? "y" : "n"
+		);
 
-		while (! $selectedAction) {
-			echo sprintf(
-				"Do you want to continue? %s (default is [%s]): ",
-				implode("  ", array_map(function ($option) {
-					return preg_replace("/^./", "[$0]", $option);
-				}, $options)),
-				$options[$defaultAction][0]
-			);
+		$question->setAutocompleterValues(null);
 
-			$input = trim(fgets(STDIN));
+		$answer = $this->questionHelper->ask($question);
 
-			if (! $input) {
-				$selectedAction = $defaultAction;
-				break;
-			}
-
-			foreach ($options as $action => $option) {
-				if (stripos($option, $input) === 0) {
-					$selectedAction = $action;
-				}
-			}
-
-			if (! $selectedAction) {
-				Log::error(sprintf("Unknown option: %s" . PHP_EOL, $input));
-			}
-		}
-
-		echo PHP_EOL;
-
-		return $selectedAction;
+		return $choiceActions[$answer];
 	}
 }

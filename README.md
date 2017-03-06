@@ -1,16 +1,16 @@
-# PW-Test
+# Tense
 
 > Project is still in **early development** and may change a lot.
 
-Command-line tool to easily run tests agains multiple versions of [ProcessWire CMF](https://processwire.com).
+Tense (**T**est **EN**vironment **S**etup & **E**xecution) is a command-line tool to easily run tests agains
+multiple versions of [ProcessWire CMF](https://processwire.com).
 
 Are you building a module, or a template and you need to make sure it works in all supported ProcessWire versions?
-Then `PW-Test` is exactly what you need. Write the tests (PHPUnit, CodeCeption, ...).
-Tell `PW-Test` which ProcessWire versions you are interested in and it will do the rest for you.
+Then `Tense` is exactly what you need. Write the tests in any testing framework, tell `Tense` which ProcessWire versions you are interested in and it will do the rest for you.
 
 > Tested on **Windows** and **Linux**
 
-**See [example](https://github.com/uiii/pw-test/tree/master/example)**
+**See [example](https://github.com/uiii/tense/tree/master/example)**
 or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-processwire-versions-automatically) in a real project**.
 
 [![video](example/asciicast.gif)](https://asciinema.org/a/95368)
@@ -46,42 +46,42 @@ or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-
 
 Install globally:
 ```
-composer global require uiii/pw-test:dev-master
+composer global require uiii/tense:dev-master
 ```
 
 or install as a project dependency:
 ```
 cd <your-project>
-composer require --dev uiii/pw-test:dev-master
+composer require --dev uiii/tense:dev-master
 ```
 
 ## Usage
 
 Go to your **project's root** directory.
 
-[Create config](#configuration) file `pw-test.yml`,
+[Create config](#configuration) file `tense.yml`,
 
-then if you installed `PW-Test` globally:
+then if you installed `Tense` globally:
 ```
-pw-test
+tense
 ```
 
-or if you've installed `PW-Test` as projects dependecy:
+or if you've installed `Tense` as project's dependecy:
 ```
-vendor/bin/pw-test
+vendor/bin/tense
 ```
 
 ## Configuration
 
-PW-Test uses [YAML](http://yaml.org/) configuration files. Copy [`pw-test.yml`](pw-test.yml) to your project's root directory and set options according to your needs.
+Tense uses [YAML](http://yaml.org/) configuration files. Copy [`tense.yml`](tense.yml) to your project's root directory and set options according to your needs.
 
 ### tmpDir
-Path to a directory where are stored files needed for testing
-(e.g ProcessWire installation, ...).
+Path to a directory where files needed for testing
+(e.g ProcessWire installation, ...) are stored.
 
 > Path is relative to the config file's parent directory.
 
-*Default is `.pw-test`*
+*Default is `.tense`*
 
 ### db
 Database connection parameters.
@@ -99,7 +99,7 @@ db:
 	port: 3306
 	user: root
 	pass: ""
-	name: pw_test
+	name: tense
 ```
 
 ### testTags
@@ -153,7 +153,7 @@ copySources:
 		- "Module.module"
 ```
 
-Consider `pw-test.yml` is in project's root and `<project-root>/Libs` is a directory. In this example these files will be copied:
+Consider `tense.yml` is in project's root and `<project-root>/Libs` is a directory. In this example these files will be copied:
 - `<project-root>/templates/home.php` to `<pw-path>/site/templates/HomeTemplate.php`
 - `<project-root>/Libs/*` to `<pw-path>/site/modules/Module/Libs`
 - `<project-root>/Module.module` to `<pw-path>/site/modules/Module/Module.module`
@@ -176,3 +176,17 @@ after each test suite against a ProcessWire instance is completed.
 - `never` - never wait (*default*)
 - `onFailure` - wait after failed test suite
 - `always` - always wait
+
+## Troubleshooting
+
+### cURL error: SSL certificate problem: unable to get local issuer certificate
+```
+Error loading sha `master`, curl request failed (status code: 0, url: https://raw.githubusercontent.com/ryancramerdesign/ProcessWire/master/wire/core/ProcessWire.php).
+cURL error: SSL certificate problem: unable to get local issuer certificate
+```
+
+If you got this error, you haven't properly configured PHP's `curl` extension. You can solve this e.g. by
+
+1. download the [https://curl.haxx.se/ca/cacert.pem](https://curl.haxx.se/ca/cacert.pem) file
+2. place it somewhere, e.g. in PHP's installation directory
+3. edit `php.ini` file and set `curl.cainfo = <aboslute-path-to-cacert-file>`

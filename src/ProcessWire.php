@@ -24,21 +24,18 @@
  * THE SOFTWARE.
  */
 
-namespace PWTest;
+namespace Tense;
 
-require_once __DIR__ . '/Helper/Log.php';
-require_once __DIR__ . '/Helper/Path.php';
-require_once __DIR__ . '/Helper/Git.php';
-require_once __DIR__ . '/Helper/Database.php';
-require_once __DIR__ . '/Helper/Wireshell.php';
+use Tense\Helper\Path;
+use Tense\Helper\Git;
+use Tense\Helper\Database;
+use Tense\Wireshell;
 
-use PWTest\Helper\Log;
-use PWTest\Helper\Path;
-use PWTest\Helper\Git;
-use PWTest\Helper\Database;
-use PWTest\Helper\Wireshell;
+use Tense\Console\Output;
 
-class Installer {
+use Symfony\Component\Console\Output\OutputInterface;
+
+class ProcessWire {
 	public static $pwGithubRepos = [
 		'processwire/processwire',
 		'processwire/processwire-legacy',
@@ -47,28 +44,35 @@ class Installer {
 
 	protected $availableTags = [];
 
+	protected $tagName;
 	protected $config;
+
+	protected $output;
 
 	protected $shouldCleanUpFiles;
 	protected $shouldcleanUpDatabase;
 
-	public function __construct($config) {
+	public function __construct($tagName, $config, OutputInterface $output) {
+		$this->tagName = $tagName;
 		$this->config = $config;
 
-		$this->initPWTags();
+		$this->output = $output;
 	}
 
-	public function installProcessWire($tagName, $installPath) {
+	public function install($installPath) {
 		$this->shouldCleanUpFiles = false;
 		$this->shouldCleanUpDatabase = false;
 
-		$availableTag = $this->getLatestAvailableMatchingTag($tagName);
+		$this->output->write("<info>Initializing ... </info>", false, Output::MESSAGE_TEMPORARY);
+
+		$availableTag = $this->getLatestAvailableMatchingTag();
 
 		if (! $availableTag) {
-			throw new \RuntimeException("No matching ProcessWire tag to '$tagName' found");
+			throw new \RuntimeException("No matching ProcessWire tag to '$this->tagName' found");
 		}
 
-		Log::info("Using latest matching ProcessWire version: {$availableTag->name}");
+		$this->output->writeln("<comment>Using latest matching ProcessWire version: {$availableTag->name}</comment>");
+		$this->output->writeln("");
 
 		$this->createDatabase();
 
@@ -78,10 +82,11 @@ class Installer {
 
 		$this->shouldCleanUpFiles = true;
 
-		Wireshell::installProcessWire($availableTag, $installPath, $this->config);
+		$wireshell = new Wireshell($this->output);
+		$wireshell->installProcessWire($availableTag, $installPath, $this->config);
 	}
 
-	public function uninstallProcessWire($processWirePath) {
+	public function uninstall($processWirePath) {
 		if ($this->shouldCleanUpFiles && file_exists($processWirePath)) {
 			Path::remove($processWirePath);
 		}
@@ -108,9 +113,13 @@ class Installer {
 		}
 	}
 
-	protected function getLatestAvailableMatchingTag($tagName) {
+	protected function getLatestAvailableMatchingTag() {
+		if (empty($this->availableTags)) {
+			$this->availableTags = $this->getAvailableTags();
+		}
+
 		foreach ($this->availableTags as $availableTag) {
-			if ($tagName === $availableTag->name || strpos($availableTag->name, $tagName . '.') === 0) {
+			if ($this->tagName === $availableTag->name || strpos($availableTag->name, $this->tagName . '.') === 0) {
 				// available tag's name equals or starts with the tag's name
 				return $availableTag;
 			}
@@ -119,16 +128,20 @@ class Installer {
 		return null;
 	}
 
-	protected function initPWTags() {
+	protected function getAvailableTags() {
+		$availableTags = [];
+
 		foreach (self::$pwGithubRepos as $pwRepo) {
 			$tags = Git::getTags($pwRepo);
 
-			$this->availableTags = array_merge($this->availableTags, $tags);
+			$availableTags = array_merge($availableTags, $tags);
 		}
 
 		/*var_dump(array_map(
 			function ($tag) { return $tag->name . " : " . $tag->sha; },
-			$this->availableTags
+			$availableTags
 		));*/
+
+		return $availableTags;
 	}
 }
