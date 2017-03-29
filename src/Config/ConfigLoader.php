@@ -24,12 +24,15 @@
  * THE SOFTWARE.
  */
 
-namespace Tense;
+namespace Tense\Config;
 
-require_once __DIR__ . '/Helper/Path.php';
-
-use Symfony\Component\Yaml\Yaml;
+use Tense\Console\QuestionHelper;
+use Tense\Helper\Obj;
 use Tense\Helper\Path;
+
+use JsonSchema\Validator;
+use JsonSchema\Constraints\Constraint;
+use Symfony\Component\Yaml\Yaml;
 
 class MissingConfigException extends \RuntimeException {
 	protected $filePath;
@@ -43,10 +46,12 @@ class MissingConfigException extends \RuntimeException {
 		));
 	}
 
-	public function filePath() {
+	public function getFilePath() {
 		return $this->filePath;
 	}
 }
+
+class MissingLocalConfigException extends MissingConfigException {}
 
 class InvalidConfigException extends \RuntimeException {
 	protected $errors;
@@ -81,61 +86,63 @@ class InvalidConfigException extends \RuntimeException {
 	}
 }
 
-class Config {
+class ConfigLoader {
 	protected $config;
 
-	public function __construct($configFilePath) {
-		$this->config = $this->load($configFilePath);
-	}
-
-	public function __get($name) {
-		if (isset($this->config->{$name})) {
-			return $this->config->{$name};
-		}
-
-		throw new \Exception("Configuration key '$name' doesn't exist.");
-	}
-
 	public function load($configFilePath) {
-		$defaultConfigFilePath = Path::join(__DIR__, "..", "tense.yml");
+		$config = $this->readConfig($configFilePath);
+		$schema = $this->readSchema();
+
+		$config = $this->validate($config, $schema);
+
+		$this->setRuntimeConfigOptions($configFilePath, $config);
+
+		return $config;
+	}
+
+	protected function readConfig($configFilePath) {
+		$configPathInfo = pathinfo($configFilePath);
+		$localConfigFilePath = Path::join(
+			$configPathInfo['dirname'],
+			sprintf("%slocal.%s",
+				basename($configPathInfo['basename'], $configPathInfo['extension']),
+				$configPathInfo['extension']
+			)
+		);
 
 		if (! file_exists($configFilePath)) {
 			throw new MissingConfigException($configFilePath);
 		}
 
-		$defaultConfig = Yaml::parse(file_get_contents($defaultConfigFilePath));
-		$config = Yaml::parse(file_get_contents($configFilePath));
+		if (! file_exists($localConfigFilePath)) {
+			throw new MissingLocalConfigException($localConfigFilePath);
+		}
 
-		$config = array_replace_recursive($defaultConfig, (array) $config);
+		$defaults = json_decode(file_get_contents(Path::join(__DIR__, '..', 'file', 'config', 'defaults.json')));
+		$projectConfig = Yaml::parse(file_get_contents($configFilePath), Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP);
+		$localConfig = Yaml::parse(file_get_contents($localConfigFilePath), Yaml::PARSE_OBJECT | Yaml::PARSE_OBJECT_FOR_MAP);
 
-		// convert associative array to object recursively
-		$config = $this->arrayToObject($config);
-
-		$this->validate($config, Path::join(__DIR__, 'file', 'config', 'schema.json'));
-
-		$config->workingDir = dirname($configFilePath);
+		$config = Obj::merge($localConfig, $projectConfig, $defaults);
 
 		return $config;
 	}
 
-	protected function validate($config, $schemaFilePath) {
-		$validator = new \JsonSchema\Validator;
-		$schema = (object)['$ref' => 'file://' . $schemaFilePath];
+	protected function readSchema() {
+		return json_decode(file_get_contents(Path::join(__DIR__, '..', 'file', 'config', 'schema.json')));
+	}
 
-		$validator->check($config, $schema);
+	protected function validate($config, $schema) {
+		$validator = new Validator;
+		$validator->validate($config, $schema);
 
 		if (! $validator->isValid()) {
 			throw new InvalidConfigException($validator->getErrors());
 		}
+
+		return $config;
 	}
 
-	/**
-	* Convert associative array to object recursively.
-	*
-	* @param array
-	* @return \stdClass
-	*/
-	protected function arrayToObject($array) {
-		return json_decode(json_encode($array));
+	protected function setRuntimeConfigOptions($configFilePath, &$config) {
+		$config->workingDir = dirname($configFilePath);
 	}
 }

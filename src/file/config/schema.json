@@ -13,11 +13,18 @@
 			"type": "object",
 			"properties": {
 				"host": { "type": "string" },
-				"port": { "type": "number" },
+				"port": { "type": "integer" },
 				"user": { "type": "string" },
 				"pass": { "type": "string" },
 				"name": { "type": "string" }
-			}
+			},
+			"required": [
+				"host",
+				"port",
+				"user",
+				"pass",
+				"name"
+			]
 		},
 
 		"testTags": {
@@ -25,7 +32,8 @@
 			"items": {
 				"type": "string",
 				"minLength": 1
-			}
+			},
+			"minItems": 1
 		},
 
 		"copySources": {
@@ -69,14 +77,5 @@
 			"type": "string",
 			"enum": ["never", "onFailure", "always"]
 		}
-	},
-
-	"required": [
-		"tmpDir",
-		"db",
-		"testTags",
-		"copySources",
-		"testCmd",
-		"waitAfterTests"
-	]
+	}
 }

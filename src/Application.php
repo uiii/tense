@@ -2,9 +2,10 @@
 
 namespace Tense;
 
-use Tense\Helper\Log;
 use Tense\Command\RunCommand;
+use Tense\Command\InitCommand;
 use Tense\Console\Output;
+use Tense\Helper\Log;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,8 +15,8 @@ class Application extends SymfonyApplication {
 	public function __construct() {
 		parent::__construct("Tense", "dev-master");
 
-		$this->add(new RunCommand);
-		$this->setDefaultCommand("run", true);
+		$this->add(new RunCommand());
+		$this->add(new InitCommand());
 	}
 
 	public function getLogo() {

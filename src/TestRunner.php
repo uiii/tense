@@ -26,10 +26,11 @@
 
 namespace Tense;
 
-use Tense\Helper\Path;
-use Tense\Helper\Cmd;
+use Tense\Config\ConfigLoader;
 use Tense\Console\Output;
 use Tense\Console\QuestionHelper;
+use Tense\Helper\Cmd;
+use Tense\Helper\Path;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,11 +50,10 @@ class TestRunner {
 	protected $output;
 	protected $questionHelper;
 
-	public function __construct($configFilePath, OutputInterface $output, QuestionHelper $questionHelper) {
+	public function __construct($config, OutputInterface $output, QuestionHelper $questionHelper) {
+		$this->config = $config;
 		$this->output = $output;
 		$this->questionHelper = $questionHelper;
-
-		$this->config = new Config($configFilePath);
 	}
 
 	public function run() {
@@ -211,12 +211,14 @@ class TestRunner {
 		$question = new ChoiceQuestion(
 			"Do you want to continue?",
 			$choices,
-			$testResult === self::RESULT_PASS ? "y" : "n"
+			$testResult === self::RESULT_PASS ? $choices["y"] : $choices["n"]
 		);
 
 		$question->setAutocompleterValues(null);
 
 		$answer = $this->questionHelper->ask($question);
+
+		$this->output->writeln("");
 
 		return $choiceActions[$answer];
 	}

@@ -34,12 +34,19 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class QuestionHelper {
 	protected $inputStream;
 
 	protected $input;
 	protected $output;
+
+	protected $formats = [
+		'question_format' => "<question>%s</question>",
+		'default_format' => " [<question>%s</question>]",
+		'choice_format' => " [<question>%s</question>] %s"
+	];
 
 	public function __construct(InputInterface $input, OutputInterface $output) {
 		$this->input = $input;
@@ -53,15 +60,15 @@ class QuestionHelper {
 	/**
 	 * Asks a question to the user.
 	 *
-	 * @param InputInterface  $input    An InputInterface instance
-	 * @param OutputInterface $output   An OutputInterface instance
 	 * @param Question        $question The question to ask
+	 * @param bool            $inline Prefer question and prompt on the same line
+	 * @param array           $formats Default formats overload
 	 *
 	 * @return string The user answer
 	 *
 	 * @throws RuntimeException If there is no data to read in the input stream
 	 */
-	public function ask(Question $question)
+	public function ask(Question $question, $formats = [])
 	{
 		if (! $this->input->isInteractive()) {
 			return $question->getDefault();
@@ -72,11 +79,11 @@ class QuestionHelper {
 		}
 
 		if (! $question->getValidator()) {
-			return $this->doAsk($this->output, $question);
+			return $this->doAsk($this->output, $question, $formats);
 		}
 
-		$interviewer = function () use ($question) {
-			return $this->doAsk($this->output, $question);
+		$interviewer = function () use ($question, $formats) {
+			return $this->doAsk($this->output, $question, $formats);
 		};
 
 		return $this->validateAttempts($interviewer, $this->output, $question);
@@ -87,21 +94,20 @@ class QuestionHelper {
 	 *
 	 * @param OutputInterface $output
 	 * @param Question        $question
+	 * @param array           $formats Default formats overload
 	 *
 	 * @return bool|mixed|null|string
 	 *
 	 * @throws \InvalidArgumentException
 	 * @throws \RuntimeException
 	 */
-	protected function doAsk(OutputInterface $output, Question $question)
+	protected function doAsk(OutputInterface $output, Question $question, $formats = [])
 	{
-		$this->writePrompt($output, $question);
+		$this->writePrompt($output, $question, $formats);
 
 		$inputStream = $this->inputStream ?: STDIN;
 
 		$ret = fgets($inputStream, 4096);
-
-		$output->writeln("");
 
 		if (false === $ret) {
 			throw new RuntimeException('Aborted');
@@ -161,29 +167,37 @@ class QuestionHelper {
 	 *
 	 * @param OutputInterface $output
 	 * @param Question        $question
+	 * @param array           $formats Formats overloads
 	 */
-	protected function writePrompt(OutputInterface $output, Question $question)
+	protected function writePrompt(OutputInterface $output, Question $question, $formats = [])
 	{
-		$output->write(sprintf("<question>%s</question>", $question->getQuestion()));
+		$formats = array_replace($this->formats, $formats);
 
-		if ($question->getDefault()) {
-			$output->write(sprintf(" (default [<question>%s</question>])", $question->getDefault()[0]));
+		$output->write(sprintf($formats['question_format'], $question->getQuestion()));
+
+		$default = $question->getDefault();
+		if (! is_null($default)) {
+			if ($question instanceof ConfirmationQuestion) {
+				$default = $default ? "yes" : "no";
+			}
+
+			$output->write(sprintf($formats['default_format'], $default));
 		}
-
-		$output->writeln("");
 
 		if ($question instanceof ChoiceQuestion) {
 			$messages = [];
 			foreach ($question->getChoices() as $key => $value) {
-				$messages[] = sprintf(" [<question>%s</question>] %s", $value[0], substr($value, 0));
+				$messages[] = sprintf($formats['choice_format'], $key, substr($value, 0));
 			}
 
 			$output->writeln("");
+			$output->writeln("");
 			$output->writeln(implode(PHP_EOL, $messages));
 			$output->writeln("");
+			$output->write("> ");
+		} else {
+			$output->write(": ");
 		}
-
-		$output->write("> ");
 	}
 
 	/**

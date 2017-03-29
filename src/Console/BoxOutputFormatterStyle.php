@@ -41,14 +41,14 @@ class BoxOutputFormatterStyle extends OutputFormatterStyle {
 		'white' => array('set' => 37, 'unset' => 39),
 		'default' => array('set' => 39, 'unset' => 39),
 
-		'light-black' => array('set' => 90, 'unset' => 39),
-		'light-red' => array('set' => 91, 'unset' => 39),
-		'light-green' => array('set' => 92, 'unset' => 39),
-		'light-yellow' => array('set' => 93, 'unset' => 39),
-		'light-blue' => array('set' => 94, 'unset' => 39),
-		'light-magenta' => array('set' => 95, 'unset' => 39),
-		'light-cyan' => array('set' => 96, 'unset' => 39),
-		'light-white' => array('set' => 97, 'unset' => 39),
+		'light-black' => array('set' => 90, 'unset' => '30;39'),
+		'light-red' => array('set' => 91, 'unset' => '30;39'),
+		'light-green' => array('set' => 92, 'unset' => '30;39'),
+		'light-yellow' => array('set' => 93, 'unset' => '30;39'),
+		'light-blue' => array('set' => 94, 'unset' => '30;39'),
+		'light-magenta' => array('set' => 95, 'unset' => '30;39'),
+		'light-cyan' => array('set' => 96, 'unset' => '30;39'),
+		'light-white' => array('set' => 97, 'unset' => '30;39'),
 	);
 
 	protected static $availableBackgroundColors = array(

@@ -24,10 +24,10 @@ or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-
 
 ## Requirements
 
-- PHP 5.6 or greater
+- PHP 5.6 or higher
 - Composer (https://getcomposer.org)
 - Git (https://git-scm.com)
-- MySQL or MariaDB 5.0.15 or greater
+- MySQL or MariaDB 5.0.15 or higher
 
 ### php.ini
 
@@ -59,23 +59,37 @@ composer require --dev uiii/tense:dev-master
 
 Go to your **project's root** directory.
 
-[Create config](#configuration) file `tense.yml`,
+1. [create config](#configuration) file `tense.yml`:
 
-then if you installed `Tense` globally:
 ```
-tense
+tense init
 ```
 
-or if you've installed `Tense` as project's dependecy:
+2. run tests:
 ```
-vendor/bin/tense
+tense run
 ```
+
+> if you've installed `Tense` locally as project's dependecy, use `vendor/bin/tense` instead of `tense`
 
 ## Configuration
 
-Tense uses [YAML](http://yaml.org/) configuration files. Copy [`tense.yml`](tense.yml) to your project's root directory and set options according to your needs.
+Tense uses [YAML](http://yaml.org/) configuration files. There are two types of config files:
+
+- **project** (`tense.yml`): It should contain options directly related to the project's testing. This config is intended to be shared (VCS, ...).
+- **local** (`tense.local.yml`): It should contain options related to the machine's environment setup (database connection, ...), overwrites options from project's config. This is **not** intended to be shared.
+
+The **project**'s config can be created either manually or interactively by running the command:
+
+```
+tense init
+```
+
+The **local** config is automatically initialized on each `tense run` when missing.
 
 ### tmpDir
+> *optional*, config: project, local
+
 Path to a directory where files needed for testing
 (e.g ProcessWire installation, ...) are stored.
 
@@ -84,6 +98,8 @@ Path to a directory where files needed for testing
 *Default is `.tense`*
 
 ### db
+> **required**, config: local
+
 Database connection parameters.
 
 > They are used to create the database
@@ -103,6 +119,8 @@ db:
 ```
 
 ### testTags
+> **required**, config: project
+
 List of ProcessWire tags/versions used for testing.
 
 It doesn't have to be exact version number.
@@ -125,6 +143,8 @@ testTags:
 ```
 
 ### copySources
+> *optional*, config: project
+
 Copy source files into ProcessWire's' installation before testing.
 
 It is a list of objects with `destination` and `source` properties.
@@ -159,6 +179,8 @@ Consider `tense.yml` is in project's root and `<project-root>/Libs` is a directo
 - `<project-root>/Module.module` to `<pw-path>/site/modules/Module/Module.module`
 
 ### testCmd
+> **required**, config: project
+
 Command to execute a test suite.
 
 > Path to the ProcessWire installation will be in `PW_PATH` environment variable.
@@ -169,6 +191,8 @@ testCmd: "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
 ```
 
 ### waitAfterTests
+> *optional*, config: local
+
 Test runner can wait and ask the user what to do
 after each test suite against a ProcessWire instance is completed.
 

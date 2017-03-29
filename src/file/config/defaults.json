@@ -1,0 +1,5 @@
+{
+	"tmpDir": ".tense",
+	"copySources": [],
+	"waitAfterTests": "never"
+}

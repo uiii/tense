@@ -42,7 +42,7 @@ class ProcessWire {
 		'ryancramerdesign/ProcessWire'
 	];
 
-	protected $availableTags = [];
+	protected static $availableTags = [];
 
 	protected $tagName;
 	protected $config;
@@ -114,11 +114,11 @@ class ProcessWire {
 	}
 
 	protected function getLatestAvailableMatchingTag() {
-		if (empty($this->availableTags)) {
-			$this->availableTags = $this->getAvailableTags();
+		if (empty(self::$availableTags)) {
+			self::$availableTags = self::getAvailableTags();
 		}
 
-		foreach ($this->availableTags as $availableTag) {
+		foreach (self::$availableTags as $availableTag) {
 			if ($this->tagName === $availableTag->name || strpos($availableTag->name, $this->tagName . '.') === 0) {
 				// available tag's name equals or starts with the tag's name
 				return $availableTag;
@@ -128,7 +128,7 @@ class ProcessWire {
 		return null;
 	}
 
-	protected function getAvailableTags() {
+	protected static function getAvailableTags() {
 		$availableTags = [];
 
 		foreach (self::$pwGithubRepos as $pwRepo) {

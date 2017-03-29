@@ -26,9 +26,7 @@
 
 namespace Tense\Command;
 
-use Tense\Config\ConfigLoader;
 use Tense\Config\ConfigInitializer;
-use Tense\Config\MissingLocalConfigException;
 use Tense\Console\BoxOutputFormatterStyle;
 use Tense\Console\Output;
 use Tense\Console\OutputFormatter;
@@ -38,17 +36,19 @@ use Tense\TestRunner;
 
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class RunCommand extends Command
+class InitCommand extends Command
 {
 	protected function configure()
 	{
 		$this
-			->setName('run')
-			->setDescription('Run tests');
+			->setName('init')
+			->setDescription('Config generation utility')
+
+			->addArgument('config_file', InputArgument::OPTIONAL, "Config file path (relative to current directory)", "tense.yml");
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output)
@@ -59,36 +59,15 @@ class RunCommand extends Command
 		$output->writeln($this->getApplication()->getLogo());
 		$output->writeln("");
 
-		$configLoader = new ConfigLoader();
-		$config = null;
+		$output->writeln("<heading>:: Config generation utility ::</heading>");
+		$output->writeln("");
 
-		try {
-			$config = $configLoader->load($configFilePath);
-		} catch (MissingLocalConfigException $e) {
-			$this->handleMissingLocalConfig($e->getFilePath(), $output, $questionHelper);
-			$config = $configLoader->load($configFilePath);
-
-			$output->writeln("");
-		}
-
-		$runner = new TestRunner($config, $output, $questionHelper);
-		return $runner->run();
-	}
-
-	protected function handleMissingLocalConfig($localConfigFilePath, OutputInterface $output, QuestionHelper $questionHelper) {
-		$output->writeln(sprintf("<warning>Local config file %s is not yet created.</warning>", $localConfigFilePath));
-		$output->writeln("Local config is required before continuing.");
-
-		$question = new ConfirmationQuestion("Do you want to initialize it?", true);
-		$answer = $questionHelper->ask($question);
-
-		if (! $answer) {
-			return;
-		}
+		$output->writeln("This utility will guide you through creating tense.yml config.");
+		$output->writeln("It will cover only configuration related to project's level.");
 
 		$output->writeln("");
 
 		$configInitializer = new ConfigInitializer($output, $questionHelper);
-		$configInitializer->initialize($localConfigFilePath, 'local');
+		$configInitializer->initialize($input->getArgument('config_file'));
 	}
 }

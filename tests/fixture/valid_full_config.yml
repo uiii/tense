@@ -1,12 +1,5 @@
 tmpDir: ".tmp-dir"
 
-db:
-    host: "example.com"
-    port: 1234
-    user: "user"
-    pass: "pass"
-    name: "db_name"
-
 testTags:
     - "2.7"
     - "3.0"
@@ -20,5 +13,3 @@ copySources:
       source: "template.php"
 
 testCmd: "vendor/bin/phpunit"
-
-waitAfterTests: "onFailure"

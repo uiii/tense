@@ -26,6 +26,7 @@ class OutputFormatter extends SymfonyOutputFormatter {
 
 		$this->setStyle('debug', new BoxOutputFormatterStyle('magenta'));
 		$this->setStyle('info', new BoxOutputFormatterStyle('white'));
+		$this->setStyle('em', new BoxOutputFormatterStyle('light-white'));
 		$this->setStyle('warning', new BoxOutputFormatterStyle('black', 'yellow', [], array(0, 1)));
 		$this->setStyle('error', new BoxOutputFormatterStyle('white', 'red', [], array(0, 1)));
 		$this->setStyle('success', new BoxOutputFormatterStyle('black', 'green', [], array(0, 1)));

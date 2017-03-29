@@ -2,11 +2,11 @@
     "tmpDir": ".tense",
 
     "db": {
-        "host": "localhost",
-        "port": 3306,
-        "user": "root",
-        "pass": "",
-        "name": "tense"
+        "host": "example.com",
+        "port": 1234,
+        "user": "user",
+        "pass": "pass",
+        "name": "db_name"
     },
 
     "testTags": [
