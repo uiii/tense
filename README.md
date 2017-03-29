@@ -61,14 +61,15 @@ Go to your **project's root** directory.
 
 1. [create config](#configuration) file `tense.yml`:
 
-```
-tense init
-```
+    ```
+    tense init
+    ```
 
 2. run tests:
-```
-tense run
-```
+
+    ```
+    tense run
+    ```
 
 > if you've installed `Tense` locally as project's dependecy, use `vendor/bin/tense` instead of `tense`
 
