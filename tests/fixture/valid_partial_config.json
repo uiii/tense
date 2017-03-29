@@ -30,5 +30,5 @@
 
     "testCmd": "vendor/bin/phpunit",
 
-    "waitAfterTests": "never"
+    "pause": "never"
 }

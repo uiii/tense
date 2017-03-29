@@ -47,7 +47,7 @@ class ConfigLoaderTest extends Tester\TestCase {
 			"copySources[1]",
 			"copySources[2].source",
 			"copySources[3].destination",
-			"waitAfterTests"
+			"pause"
 		]);
 	}
 

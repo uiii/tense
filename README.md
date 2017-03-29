@@ -192,16 +192,18 @@ Command to execute a test suite.
 testCmd: "vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Test.php"
 ```
 
-### waitAfterTests
+### pause
 > *optional*, config: local
 
-Test runner can wait and ask the user what to do
-after each test suite against a ProcessWire instance is completed.
+After each test suite against a ProcessWire instance
+but before a clean up test runner can pause and ask the user what to do.
+
+This is useful e.g. to examine the installed ProcessWire instance.
 
 *Possible values are:*
-- `never` - never wait (*default*)
-- `onFailure` - wait after failed test suite
-- `always` - always wait
+- `never` - never pause (*default*)
+- `onFailure` - pause after failed test suite
+- `always` - always pause after a test suite
 
 ## Troubleshooting
 

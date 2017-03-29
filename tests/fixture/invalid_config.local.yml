@@ -17,4 +17,4 @@ copySources:
 
 testCmd: ""
 
-waitAfterTests: "a"
+pause: "a"

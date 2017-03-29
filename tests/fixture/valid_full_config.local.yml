@@ -5,4 +5,4 @@ db:
     pass: "pass"
     name: "db_name"
 
-waitAfterTests: "onFailure"
+pause: "onFailure"

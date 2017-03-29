@@ -5,6 +5,6 @@
 	},
 	"local": {
 		"required": ["db"],
-		"optional": ["tmpDir", "waitAfterTests"]
+		"optional": ["tmpDir", "pause"]
 	}
 }

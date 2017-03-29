@@ -73,7 +73,7 @@
 			"type": "string"
 		},
 
-		"waitAfterTests": {
+		"pause": {
 			"type": "string",
 			"enum": ["never", "onFailure", "always"]
 		}

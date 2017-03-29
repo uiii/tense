@@ -175,18 +175,18 @@ class TestRunner {
 	}
 
 	protected function askForAction($testResult, $processWirePath) {
-		$waitAfterTests = $this->config->waitAfterTests;
+		$pause = $this->config->pause;
 
-		$neverWait = $waitAfterTests === "never";
-		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $testResult === self::RESULT_PASS;
+		$neverPause = $pause === "never";
+		$pauseOnFailureButSuccess = $pause === "onFailure" && $testResult === self::RESULT_PASS;
 
-		if ($neverWait || $waitOnFailureButSuccess) {
+		if ($neverPause || $pauseOnFailureButSuccess) {
 			return self::ACTION_CONTINUE;
 		}
 
 		$this->output->writeln(sprintf(
-			"<comment>Test runner is now halted (configured to wait after %s tests, see 'waitAfterTests' option)</comment>",
-			$waitAfterTests === "always" ? "all" : "failed"
+			"<comment>Test runner is now halted (configured to pause after %s tests, see 'pause' option)</comment>",
+			$pause === "always" ? "all" : "failed"
 		));
 
 		if ($processWirePath) {
