@@ -262,7 +262,7 @@ class ConfigInitializer {
 
 			foreach ($oneOf as $oneOfSchema) {
 				if ($oneOfSchema->type === 'array') {
-					$schema = $oneOfSchema;
+					$schema = clone $oneOfSchema;
 					$schema->type = 'array-or-single';
 
 					$oneOfSchema = $oneOfSchema->items;
