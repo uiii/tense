@@ -20,7 +20,7 @@
     },
     "require": {
         "php": ">=5.6",
-        "justinrainbow/json-schema": "dev-master",
+        "justinrainbow/json-schema": "^5.2",
         "symfony/yaml": "dev-master",
         "symfony/console": "^3.2"
     },

@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0f2e89128e5499d218388205b109d2e",
+    "content-hash": "a57cae7318e8ec8ef7251a404e1a63ab",
     "packages": [
         {
             "name": "justinrainbow/json-schema",
-            "version": "dev-master",
+            "version": "5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "9225c967a5395e4643b5124806191c038fb1224b"
+                "reference": "e3c9bccdc38bbd09bcac0131c00f3be58368b416"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/9225c967a5395e4643b5124806191c038fb1224b",
-                "reference": "9225c967a5395e4643b5124806191c038fb1224b",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/e3c9bccdc38bbd09bcac0131c00f3be58368b416",
+                "reference": "e3c9bccdc38bbd09bcac0131c00f3be58368b416",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "json",
                 "schema"
             ],
-            "time": "2017-03-23 00:52:32"
+            "time": "2017-03-22T22:43:35+00:00"
         },
         {
             "name": "psr/log",
@@ -1736,7 +1736,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "justinrainbow/json-schema": 20,
         "symfony/yaml": 20
     },
     "prefer-stable": false,
