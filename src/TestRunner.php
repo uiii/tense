@@ -178,7 +178,7 @@ class TestRunner {
 		$waitAfterTests = $this->config->waitAfterTests;
 
 		$neverWait = $waitAfterTests === "never";
-		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $testResult === self::RESULT_FAILURE;
+		$waitOnFailureButSuccess = $waitAfterTests === "onFailure" && $testResult === self::RESULT_PASS;
 
 		if ($neverWait || $waitOnFailureButSuccess) {
 			return self::ACTION_CONTINUE;
