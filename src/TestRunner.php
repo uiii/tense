@@ -138,20 +138,20 @@ class TestRunner {
 	}
 
 	protected function copySourceFiles($processWirePath) {
-		foreach ($this->config->copySources as $destination => $sources) {
-			if (is_array($sources)) {
-				foreach($sources as $source) {
+		foreach ($this->config->copySources as $item) {
+			if (is_array($item->source)) {
+				foreach($item->source as $source) {
 					$source = trim($source);
 
 					Path::copy(
 						Path::join(dirname($this->config->workingDir), $source),
-						Path::join($processWirePath, trim($destination), basename($source))
+						Path::join($processWirePath, trim($item->destination), basename($source))
 					);
 				}
 			} else {
 				Path::copy(
-					Path::join(dirname($this->config->workingDir), trim($sources)),
-					Path::join($processWirePath, $destination)
+					Path::join(dirname($this->config->workingDir), trim($item->source)),
+					Path::join($processWirePath, $item->destination)
 				);
 			}
 		}
