@@ -144,13 +144,13 @@ class TestRunner {
 					$source = trim($source);
 
 					Path::copy(
-						Path::join(dirname($this->config->workingDir), $source),
+						Path::join($this->config->workingDir, $source),
 						Path::join($processWirePath, trim($item->destination), basename($source))
 					);
 				}
 			} else {
 				Path::copy(
-					Path::join(dirname($this->config->workingDir), trim($item->source)),
+					Path::join($this->config->workingDir, trim($item->source)),
 					Path::join($processWirePath, $item->destination)
 				);
 			}
