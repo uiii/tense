@@ -52,7 +52,9 @@ class ConfigInitializer {
 		$defaults = $this->loadDefaults();
 
 		$config = $this->getObject(null, null, $schema, $defaults);
-		$yaml = Yaml::dump($config, 2, 4, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE);
+
+		// TODO uncomment the option when Symfony/Yaml fixes the issue with dumping empty arrays as object
+		$yaml = Yaml::dump($config, 2, 4/*, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE*/);
 
 		$this->output->writeln("<heading>:: Generated config ::</heading>");
 		$this->output->writeln("");

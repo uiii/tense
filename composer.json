@@ -18,10 +18,11 @@
             "Tense\\": "src/"
         }
     },
+    "minimum-stability": "stable",
     "require": {
         "php": ">=5.6",
         "justinrainbow/json-schema": "^5.2",
-        "symfony/yaml": "dev-master",
+        "symfony/yaml": "^3.2",
         "symfony/console": "^3.2"
     },
     "require-dev": {
