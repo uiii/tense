@@ -21,6 +21,7 @@ or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-
 2. [Installation](#installation)
 3. [Usage](#usage)
 7. [Configuration](#configuration)
+8. [Troubleshooting](#troubleshooting)
 
 ## Requirements
 
@@ -59,7 +60,7 @@ composer require --dev uiii/tense:dev-master
 
 Go to your **project's root** directory.
 
-1. [create config](#configuration) file `tense.yml`:
+1. create [config](#configuration) file `tense.yml`:
 
     ```
     tense init
