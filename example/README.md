@@ -44,16 +44,16 @@ Tense is configured to test `ProcessWire` versions `2.5`, `2.7` and `3.0`. In th
 tmpDir: .tense
 
 db:
-	host: localhost
-	port: 3306
-	user: root
-	pass: ""
-	name: tense
+    host: localhost
+    port: 3306
+    user: root
+    pass: ""
+    name: tense
 
 testTags:
-	- "2.5"
-	- "2.7"
-	- "3.0"
+    - "2.5"
+    - "2.7"
+    - "3.0"
 
 copySources: []
 
