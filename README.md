@@ -61,14 +61,15 @@ Go to your **project's root** directory.
 
 1. [create config](#configuration) file `tense.yml`:
 
-```
-tense init
-```
+    ```
+    tense init
+    ```
 
 2. run tests:
-```
-tense run
-```
+
+    ```
+    tense run
+    ```
 
 > if you've installed `Tense` locally as project's dependecy, use `vendor/bin/tense` instead of `tense`
 
@@ -111,11 +112,11 @@ must have the privileges to create a database.
 *Example:*
 ```yaml
 db:
-	host: localhost
-	port: 3306
-	user: root
-	pass: ""
-	name: tense
+    host: localhost
+    port: 3306
+    user: root
+    pass: ""
+    name: tense
 ```
 
 ### testTags
@@ -136,10 +137,10 @@ Versions are tested in the specified order.
 *Example:*
 ```yaml
 testTags:
-	- "2.5"
-	- "2.6"
-	- "2.7.1"
-	- "3.0"
+    - "2.5"
+    - "2.6"
+    - "2.7.1"
+    - "3.0"
 ```
 
 ### copySources
@@ -164,13 +165,13 @@ is considered to be a directory where all sources are copied into.
 
 ```yaml
 copySources:
-	- destination: "site/templates/HomeTemplate.php"
-	source: "src/templates/home.php"
+    - destination: "site/templates/HomeTemplate.php"
+    source: "src/templates/home.php"
 
-	- destination: "site/modules/Module"
-	source:
-		- "Libs"
-		- "Module.module"
+    - destination: "site/modules/Module"
+    source:
+        - "Libs"
+        - "Module.module"
 ```
 
 Consider `tense.yml` is in project's root and `<project-root>/Libs` is a directory. In this example these files will be copied:
