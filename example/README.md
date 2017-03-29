@@ -41,39 +41,27 @@ Tense is configured to test `ProcessWire` versions `2.5`, `2.7` and `3.0`. In th
 
 **tense.yml**
 ```yaml
-tmpDir: .tense
-
-db:
-    host: localhost
-    port: 3306
-    user: root
-    pass: ""
-    name: tense
-
 testTags:
     - "2.5"
     - "2.7"
     - "3.0"
 
-copySources: []
-
 testCmd: "../vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php"
-
-waitAfterTests: never
 ```
 
 ## How to run
 
-1. Look at the `db` section in `tense.yml` configuration and update it if necessary.
-2. Make sure MySQL is running and corresponds with the configuration.
-3. In `Tense` **root** directory run:
-```
-composer install
-```
-4. In `example` directory run:
-```
-php ../tense
-```
+1. In `Tense` **root** directory run:
+
+	```
+	composer install
+	```
+
+2. In `example` directory run:
+
+	```
+	php ../tense run
+	```
 
 ## Output
 
