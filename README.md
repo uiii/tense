@@ -13,7 +13,7 @@ Then `Tense` is exactly what you need. Write the tests in any testing framework,
 **See [example](https://github.com/uiii/tense/tree/master/example)**
 or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-processwire-versions-automatically) in a real project**.
 
-[![video](example/asciicast.gif)](https://asciinema.org/a/95368)
+[![video](example/asciicast.gif)](https://asciinema.org/a/109559)
 
 ## Table of Contents
 

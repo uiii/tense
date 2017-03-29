@@ -79,4 +79,4 @@ php ../tense
 
 Output may look like this:
 
-[![video](asciicast.gif)](https://asciinema.org/a/95368)
+[![video](asciicast.gif)](https://asciinema.org/a/109559)
