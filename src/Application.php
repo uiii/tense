@@ -45,6 +45,6 @@ LOGO;
 
 		Log::setOutput($output);
 
-		parent::run($input, $output);
+		return parent::run($input, $output);
 	}
 }
