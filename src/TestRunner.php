@@ -106,7 +106,7 @@ class TestRunner {
 			$this->output->writeln(sprintf("<error>FAILURE (%s tested, %s passed, %s failed, %s skipped)</error>", count($results), $passedCount, $failedCount, $skippedCount));
 		}
 
-		return count($results) === $passedCount;
+		return count($results) === $passedCount ? 0 : 1;
 	}
 
 	protected function testProcessWire($tagName) {
