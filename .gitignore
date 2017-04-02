@@ -1,2 +1,4 @@
+.ampp
 vendor
 tests/**/output
+tests/ci/current-out.log

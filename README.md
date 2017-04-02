@@ -1,5 +1,8 @@
 # Tense
 
+![travis-linux](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Linux&params[os]=linux)
+![travis-osx](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Mac&params[os]=osx)
+
 > Project is still in **early development** and may change a lot.
 
 Tense (**T**est **EN**vironment **S**etup & **E**xecution) is a command-line tool to easily run tests agains
@@ -208,10 +211,6 @@ This is useful e.g. to examine the installed ProcessWire instance.
 ## Troubleshooting
 
 ### cURL error: SSL certificate problem: unable to get local issuer certificate
-```
-Error loading sha `master`, curl request failed (status code: 0, url: https://raw.githubusercontent.com/ryancramerdesign/ProcessWire/master/wire/core/ProcessWire.php).
-cURL error: SSL certificate problem: unable to get local issuer certificate
-```
 
 If you got this error, you haven't properly configured PHP's `curl` extension. You can solve this e.g. by
 

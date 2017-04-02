@@ -1,0 +1,34 @@
+language: php
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+matrix:
+  include:
+    - os: osx
+      language: generic
+      env: TRAVIS_PHP_VERSION=5.6
+    - os: osx
+      language: generic
+      env: TRAVIS_PHP_VERSION=7.0
+services:
+  - mysql
+before_install:
+  - |
+    if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      curl -s https://php-osx.liip.ch/install.sh | bash -s $TRAVIS_PHP_VERSION
+      sudo sh -c 'echo "error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT" >> /usr/local/php5/php.d/99-liip-developer.ini'
+      sudo rm /usr/local/php5/php.d/50-extension-xdebug.ini
+      export PATH=/usr/local/php5/bin:$PATH;
+      brew install mariadb
+      curl https://getcomposer.org/installer | php
+      mv composer.phar /usr/local/bin/composer
+      mysql.server start
+    else
+      echo "error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+    fi
+before_script:
+  - "composer install"
+  - "echo -e \"db:\n  host: 127.0.0.1\n  port: 3306\n  user: root\n  pass: ''\n  name: tense\n\" > example/tense.local.yml"
+script:
+  - ./tests/ci/run.sh

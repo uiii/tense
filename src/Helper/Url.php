@@ -28,32 +28,30 @@ namespace Tense\Helper;
 
 use Tense\Helper\Log;
 
+class CurlException extends \RuntimeException {}
+
 abstract class Url {
 	public static function get($url, $outputFile = null) {
 		Log::info(sprintf("Downloading URL: %s", $url));
 		Log::debug(sprintf("To file: %s", $outputFile));
 
 		$curl = curl_init();
-		$outputFileHandle = null;
 
 		curl_setopt($curl, CURLOPT_URL, $url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($curl, CURLOPT_USERAGENT, 'uiii/tense');
 		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
-		if ($outputFile) {
-			$outputFileHandle = fopen($outputFile, 'w+');
-			curl_setopt($curl, CURLOPT_FILE, $outputFileHandle);
-		}
-
 		$content = curl_exec($curl);
+
+		if ($content === false) {
+			$error = curl_error($curl);
+			throw new CurlException($error);
+		}
 
 		curl_close($curl);
 
-		if ($outputFile) {
-			fclose($outputFileHandle);
-		}
+		file_put_contents($outputFile, $content);
 
 		return $content;
 	}
