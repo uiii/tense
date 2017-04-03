@@ -1,7 +1,7 @@
 # Tense
 
-![travis-linux](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Linux&params[os]=linux)
-![travis-osx](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Mac&params[os]=osx)
+[![travis-linux](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Linux&params[os]=linux)](https://travis-ci.org/uiii/tense)
+[![travis-osx](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Mac&params[os]=osx)](https://travis-ci.org/uiii/tense)
 
 > Project is still in **early development** and may change a lot.
 
