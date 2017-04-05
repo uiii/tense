@@ -1,6 +1,7 @@
 build: false
 shallow_clone: false
 platform:
+  - x86
   - x64
 clone_folder: c:\projects\tense
 
