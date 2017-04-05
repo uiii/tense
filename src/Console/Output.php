@@ -30,20 +30,29 @@ class Output extends ConsoleOutput {
 		}
 
 		if ($options & self::MESSAGE_TEMPORARY) {
-			if ($this->getVerbosity() === OutputInterface::VERBOSITY_NORMAL) {
-				$this->tempMessage = $message;
-				$newline = false;
-			} else {
-				$newline = true;
-			}
+			$this->writeTemp($message, $options);
+			return;
 		}
 
 		parent::write($message, $newline, $options);
 	}
 
+	protected function writeTemp($message, $options) {
+		if ($this->getVerbosity() === OutputInterface::VERBOSITY_NORMAL) {
+			$this->tempMessage = $message;
+			$newline = false;
+		} else {
+			$newline = true;
+		}
+
+		$output = $this->getErrorOutput();
+		$output->write($message, $newline, $options);
+	}
+
 	protected function overwrite($message) {
-		parent::write("\r", false, OutputInterface::OUTPUT_RAW);
-		parent::write(str_repeat(" ", strlen($message)));
-		parent::write("\r", false, OutputInterface::OUTPUT_RAW);
+		$output = $this->getErrorOutput();
+		$output->write("\r", false, OutputInterface::OUTPUT_RAW);
+		$output->write(str_repeat(" ", strlen($message)));
+		$output->write("\r", false, OutputInterface::OUTPUT_RAW);
 	}
 }

@@ -54,7 +54,7 @@ abstract class Git {
 			$tag = new \stdClass;
 			$tag->name = explode('/', $ref)[2];
 			$tag->sha = $sha;
-			$tag->zip = $repoUrl . "/archive/$sha.zip";
+			$tag->zip = $repoUrl . "/archive/" . $tag->name . ".zip";
 
 			array_push($tags, $tag);
 		}

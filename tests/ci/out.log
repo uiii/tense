@@ -1,58 +1,0 @@
- _______ ___ __ __ _____ _____
-|__   __| __|  \  |  ___/  ___|
-  |   |  __|      |___  |  __|
-  |___|_____|__\__|_____|_____|
-
-Test environment setup & execution   dev-master
-
-:: Testing against ProcessWire 2.5 ::
-
-Initializing ...                               Using latest matching ProcessWire version: 2.5.3
-
-Downloading wireshell 0.6.0 ...                                              Installing wireshell 0.6.0 ...                                             Downloading ProcessWire 2.5.3 ...                                                Installing ProcessWire 2.5.3 ...                                               ▌ PHPUnit 5.7.17 by Sebastian Bergmann and contributors.
-▌ 
-▌ ..F                                                                 3 / 3 (100%)
-▌ 
-▌ Time: 281 ms, Memory: 27.50MB
-▌ 
-▌ There was 1 failure:
-▌ 
-▌ 1) ExampleTest::testVersion
-▌ Failed asserting that '2.5.3' matches PCRE pattern "/^(?!2.5)/".
-▌ 
-▌ /home/travis/build/uiii/tense/example/tests/ExampleTest.php:27
-▌ 
-▌ FAILURES!
-▌ Tests: 3, Assertions: 3, Failures: 1.
-
-Cleaning up ...                              :: Testing against ProcessWire 2.7 ::
-
-Initializing ...                               Using latest matching ProcessWire version: 2.7.2
-
-Downloading ProcessWire 2.7.2 ...                                                Installing ProcessWire 2.7.2 ...                                               ▌ PHPUnit 5.7.17 by Sebastian Bergmann and contributors.
-▌ 
-▌ ...                                                                 3 / 3 (100%)
-▌ 
-▌ Time: 741 ms, Memory: 36.00MB
-▌ 
-▌ OK (3 tests, 3 assertions)
-
-Cleaning up ...                              :: Testing against ProcessWire 3.0 ::
-
-Initializing ...                               Using latest matching ProcessWire version: 3.0.42
-
-Downloading wireshell 2f62313 ...                                                Installing wireshell 2f62313 ...                                               Downloading ProcessWire 3.0.42 ...                                                 Installing ProcessWire 3.0.42 ...                                                ▌ PHPUnit 5.7.17 by Sebastian Bergmann and contributors.
-▌ 
-▌ ...                                                                 3 / 3 (100%)
-▌ 
-▌ Time: 1.35 seconds, Memory: 45.50MB
-▌ 
-▌ OK (3 tests, 3 assertions)
-
-Cleaning up ...                              :: Results ::
-
-2.5: FAILURE 
-2.7: PASS 
-3.0: PASS 
-
-FAILURE (3 tested, 2 passed, 1 failed, 0 skipped)

@@ -29,6 +29,6 @@ before_install:
     fi
 before_script:
   - "composer install"
-  - "echo -e \"db:\n  host: 127.0.0.1\n  port: 3306\n  user: root\n  pass: ''\n  name: tense\n\" > example/tense.local.yml"
+  - "cp tests/ci/travis/tense.local.yml example/tense.local.yml"
 script:
-  - ./tests/ci/run.sh
+  - ./tests/ci/travis/run.sh

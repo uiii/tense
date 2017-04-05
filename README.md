@@ -1,7 +1,8 @@
 # Tense
 
-![travis-linux](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Linux&params[os]=linux)
-![travis-osx](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Mac&params[os]=osx)
+[![travis-linux](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Linux&params[os]=linux)](https://travis-ci.org/uiii/tens://travis-ci.org/uiii/tense)
+[![travis-osx](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Mac&params[os]=osx)](https://travis-ci.org/uiii/tens://travis-ci.org/uiii/tense)
+[![AppVeyor](https://img.shields.io/appveyor/ci/uiii/tense.svg?label=Windows)](https://ci.appveyor.com/project/uiii/tense)
 
 > Project is still in **early development** and may change a lot.
 

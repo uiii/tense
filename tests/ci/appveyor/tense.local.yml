@@ -1,0 +1,7 @@
+tmpDir: tense
+db:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  pass: Password12!
+  name: tense

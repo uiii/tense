@@ -1,0 +1,58 @@
+ _______ ___ __ __ _____ _____
+|__   __| __|  \  |  ___/  ___|
+  |   |  __|      |___  |  __|
+  |___|_____|__\__|_____|_____|
+
+Test environment setup & execution   dev-master
+
+:: Testing against ProcessWire 2.5 ::
+
+Using latest matching ProcessWire version: 2.5.3
+
+▌ PHPUnit 5.7.17 by Sebastian Bergmann and contributors.
+▌ 
+▌ ..F                                                                 3 / 3 (100%)
+▌ 
+▌ Time: 788 ms, Memory: 21.00MB
+▌ 
+▌ There was 1 failure:
+▌ 
+▌ 1) ExampleTest::testVersion
+▌ Failed asserting that '2.5.3' matches PCRE pattern "/^(?!2.5)/".
+▌ 
+▌ /home/uiii/tense/example/tests/ExampleTest.php:27
+▌ 
+▌ FAILURES!
+▌ Tests: 3, Assertions: 3, Failures: 1.
+
+:: Testing against ProcessWire 2.7 ::
+
+Using latest matching ProcessWire version: 2.7.2
+
+▌ PHPUnit 5.7.17 by Sebastian Bergmann and contributors.
+▌ 
+▌ ...                                                                 3 / 3 (100%)
+▌ 
+▌ Time: 1.62 seconds, Memory: 27.25MB
+▌ 
+▌ OK (3 tests, 3 assertions)
+
+:: Testing against ProcessWire 3.0 ::
+
+Using latest matching ProcessWire version: 3.0.42
+
+▌ PHPUnit 5.7.17 by Sebastian Bergmann and contributors.
+▌ 
+▌ ...                                                                 3 / 3 (100%)
+▌ 
+▌ Time: 2.32 seconds, Memory: 34.50MB
+▌ 
+▌ OK (3 tests, 3 assertions)
+
+:: Results ::
+
+2.5: FAILURE 
+2.7: PASS 
+3.0: PASS 
+
+FAILURE (3 tested, 2 passed, 1 failed, 0 skipped)

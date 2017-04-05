@@ -2,7 +2,7 @@
 
 TEST_DIR=$(cd "$(dirname "$0")"; pwd)
 
-cd "$TEST_DIR/../../example"
+cd "$TEST_DIR/../../../example"
 php ../tense run --no-ansi > "$TEST_DIR/current-out.log" || true
 cd "$TEST_DIR"
 cat out.log

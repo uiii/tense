@@ -1,0 +1,42 @@
+build: false
+shallow_clone: false
+platform:
+  - x64
+clone_folder: c:\projects\tense
+
+services:
+  - mysql
+
+install:
+  - SET PATH=C:\Program Files\OpenSSL;%PATH%
+  - SET PATH=C:\php;%PATH%
+  - SET PATH=C:\Program Files\MySQL\MySQL Server 5.7\bin;%PATH%
+  - sc config wuauserv start= auto
+  - net start wuauserv
+  - cinst -y OpenSSL.Light
+  - cinst -y php --params "'/ThreadSafe /InstallDir:C:\php'"
+  - cd C:\php
+  - COPY php.ini-production php.ini
+  - echo extension=php_curl.dll >> php.ini
+  - echo extension=php_gd2.dll >> php.ini
+  - echo extension=php_mbstring.dll >> php.ini
+  - echo extension=php_mysqli.dll >> php.ini
+  - echo extension=php_openssl.dll >> php.ini
+  - echo extension=php_pdo_mysql.dll >> php.ini
+  - appveyor DownloadFile https://curl.haxx.se/ca/cacert.pem
+  - echo curl.cainfo = C:\php\cacert.pem >> php.ini
+  - appveyor DownloadFile https://getcomposer.org/composer.phar
+  - echo @php %%%%~dp0composer.phar %%%%* > composer.bat
+  - dir
+  - type composer.bat
+  - cd C:\projects\tense
+  - where composer
+  - composer install --no-interaction
+  - COPY tests\ci\appveyor\tense.local.yml example\tense.local.yml
+
+test_script:
+  - cd C:\projects\tense
+  - ps: .\tests\ci\appveyor\run.ps1
+
+on_finish:
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
