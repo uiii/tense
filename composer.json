@@ -1,6 +1,7 @@
 {
     "name": "uiii/tense",
     "description": "Easy testing against multiple versions of ProcessWire CMF",
+    "version": "1.0.0",
     "keywords": ["processwire", "testing"],
     "type": "project",
     "license": "MIT",

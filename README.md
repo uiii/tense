@@ -1,18 +1,14 @@
-# Tense
+# Tense 1.0.0
 
 [![travis-linux](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Linux&params[os]=linux)](https://travis-ci.org/uiii/tense)
 [![travis-osx](http://badge.uiii.cz/?service=Travis&repo=uiii/tense&branch=master&label=Mac&params[os]=osx)](https://travis-ci.org/uiii/tense)
 [![AppVeyor](https://img.shields.io/appveyor/ci/uiii/tense.svg?label=Windows)](https://ci.appveyor.com/project/uiii/tense)
-
-> Project is still in **early development** and may change a lot.
 
 Tense (**T**est **EN**vironment **S**etup & **E**xecution) is a command-line tool to easily run tests agains
 multiple versions of [ProcessWire CMF](https://processwire.com).
 
 Are you building a module, or a template and you need to make sure it works in all supported ProcessWire versions?
 Then `Tense` is exactly what you need. Write the tests in any testing framework, tell `Tense` which ProcessWire versions you are interested in and it will do the rest for you.
-
-> Tested on **Windows** and **Linux**
 
 **See [example](https://github.com/uiii/tense/tree/master/example)**
 or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-processwire-versions-automatically) in a real project**.
