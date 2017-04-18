@@ -57,56 +57,23 @@ class TestRunner {
 	}
 
 	public function run() {
-		$results = array_combine(
-			$this->config->testTags,
-			array_fill(0, count($this->config->testTags), null)
-		);
+		$nextAction = self::ACTION_CONTINUE;
 
 		foreach ($this->config->testTags as $tagName) {
+			$results[$tagName] = null;
+
+			if ($nextAction === self::ACTION_STOP) {
+				continue;
+			}
+
 			do {
 				list($testResult, $nextAction) = $this->testProcessWire($tagName);
 			} while ($nextAction === self::ACTION_REPEAT);
 
 			$results[$tagName] = $testResult;
-
-			if ($nextAction === self::ACTION_STOP) {
-				break;
-			}
 		}
 
 		return $this->processResults($results);
-	}
-
-	protected function processResults($results) {
-		$this->output->writeln("<heading>:: Results ::</heading>");
-		$this->output->writeln("");
-
-		$passedCount = 0;
-		$failedCount = 0;
-		$skippedCount = 0;
-
-		foreach ($results as $tagName => $result) {
-			$format = $result === self::RESULT_PASS ? 'success' : ($result === self::RESULT_FAILURE ? 'error' : 'warning');
-			$this->output->writeln(sprintf("<info>%s: </info><%s>%s</%s> ", $tagName, $format, $result ?: 'SKIP', $format));
-
-			if ($result === self::RESULT_PASS) {
-				++$passedCount;
-			} elseif ($result === self::RESULT_FAILURE) {
-				++$failedCount;
-			} else {
-				++$skippedCount;
-			}
-		}
-
-		$this->output->writeln("");
-
-		if (count($results) === $passedCount) {
-			$this->output->writeln(sprintf("<success>OK (%s tested)</success>", count($results)));
-		} else {
-			$this->output->writeln(sprintf("<error>FAILURE (%s tested, %s passed, %s failed, %s skipped)</error>", count($results), $passedCount, $failedCount, $skippedCount));
-		}
-
-		return count($results) === $passedCount ? 0 : 1;
 	}
 
 	protected function testProcessWire($tagName) {
@@ -122,7 +89,7 @@ class TestRunner {
 			$processWire->install($processWirePath);
 			$this->copySourceFiles($processWirePath);
 
-			$testResult = $this->runTests($processWirePath);
+			$testResult = $this->executeTestCmd($processWirePath);
 		} catch (\Exception $e) {
 			$this->output->writeln(sprintf("<error>%s</error>", trim($e->getMessage())));
 			$this->output->writeln("");
@@ -138,6 +105,8 @@ class TestRunner {
 	}
 
 	protected function copySourceFiles($processWirePath) {
+		$this->output->write("<info>Copying source files ... </info>", false, Output::MESSAGE_TEMPORARY);
+
 		foreach ($this->config->copySources as $item) {
 			if (is_array($item->source)) {
 				foreach($item->source as $source) {
@@ -157,7 +126,7 @@ class TestRunner {
 		}
 	}
 
-	protected function runTests($processWirePath) {
+	protected function executeTestCmd($processWirePath) {
 		list($cmdExecutable, $args) = preg_split("/\s+/", trim($this->config->testCmd) . " ", 2);
 
 		$result = Cmd::run($cmdExecutable, preg_split("/\s+/", $args), [
@@ -221,5 +190,37 @@ class TestRunner {
 		$this->output->writeln("");
 
 		return $choiceActions[$answer];
+	}
+
+	protected function processResults($results) {
+		$this->output->writeln("<heading>:: Results ::</heading>");
+		$this->output->writeln("");
+
+		$passedCount = 0;
+		$failedCount = 0;
+		$skippedCount = 0;
+
+		foreach ($results as $tagName => $result) {
+			$format = $result === self::RESULT_PASS ? 'success' : ($result === self::RESULT_FAILURE ? 'error' : 'warning');
+			$this->output->writeln(sprintf("<info>%s: </info><%s>%s</%s> ", $tagName, $format, $result ?: 'SKIP', $format));
+
+			if ($result === self::RESULT_PASS) {
+				++$passedCount;
+			} elseif ($result === self::RESULT_FAILURE) {
+				++$failedCount;
+			} else {
+				++$skippedCount;
+			}
+		}
+
+		$this->output->writeln("");
+
+		if (count($results) === $passedCount) {
+			$this->output->writeln(sprintf("<success>OK (%s tested)</success>", count($results)));
+		} else {
+			$this->output->writeln(sprintf("<error>FAILURE (%s tested, %s passed, %s failed, %s skipped)</error>", count($results), $passedCount, $failedCount, $skippedCount));
+		}
+
+		return count($results) === $passedCount ? 0 : 1;
 	}
 }
