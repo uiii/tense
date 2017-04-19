@@ -48,13 +48,13 @@ or **see [usage](https://github.com/uiii/ProcessWire-FieldtypePDF#test-multiple-
 
 Install globally:
 ```
-composer global require uiii/tense:dev-master
+composer global require uiii/tense
 ```
 
 or install as a project dependency:
 ```
 cd <your-project>
-composer require --dev uiii/tense:dev-master
+composer require --dev uiii/tense
 ```
 
 ## Usage
