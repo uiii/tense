@@ -3,7 +3,7 @@ function Get-Out {
 		[string] $file
 	)
 
-	return (Get-Content $file | select-string -Pattern 'Time' -notmatch | select-string -Patter '\.php:[0-9]' -notmatch)
+	return (Get-Content $file | select-string -Pattern 'Time' -notmatch | select-string -Pattern '\.php:[0-9]' -notmatch | select-string -Pattern 'Using' -notmatch)
 }
 
 $testDir = $PSScriptRoot

@@ -7,4 +7,4 @@ php ../tense run --no-ansi > "$TEST_DIR/current-out.log" || true
 cd "$TEST_DIR"
 cat out.log
 cat current-out.log
-diff <(cat out.log | sed -e '/Time/d;/\.php:[0-9]/d') <(cat current-out.log | sed -e '/Time/d;/\.php:[0-9]/d')
+diff <(cat out.log | sed -e '/Time/d;/\.php:[0-9]/d;/Using/d') <(cat current-out.log | sed -e '/Time/d;/\.php:[0-9]/d;/Using/d')
