@@ -13,16 +13,16 @@ class ExampleTest extends PHPUnit\Framework\TestCase {
 		$modules->triggerInit();
 	}
 
-	public function testHelloworldInstalled() {
-		$this->assertTrue(wire('modules')->isInstalled('Helloworld'));
-	}
-
 	public function testTestFile() {
 		$this->assertFileExists(getenv('PW_PATH') . '/testfile');
 	}
 
 	public function testLogInstalled() {
 		$this->assertDirectoryExists(getenv('PW_PATH') . '/vendor/psr/log');
+	}
+
+	public function testHelloworldInstalled() {
+		$this->assertTrue(wire('modules')->isInstalled('Helloworld'));
 	}
 
 	public function testHelloworldPageHook() {
