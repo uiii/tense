@@ -69,6 +69,10 @@
 			}
 		},
 
+		"beforeCmd": {
+			"type": "string"
+		},
+
 		"testCmd": {
 			"type": "string"
 		},

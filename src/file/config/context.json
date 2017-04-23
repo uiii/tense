@@ -1,10 +1,10 @@
 {
 	"project": {
 		"required": ["testTags", "testCmd"],
-		"optional": ["tmpDir", "copySources"]
+		"optional": ["beforeCmd", "copySources", "tmpDir"]
 	},
 	"local": {
 		"required": ["db"],
-		"optional": ["tmpDir", "pause"]
+		"optional": ["beforeCmd", "pause", "tmpDir"]
 	}
 }

@@ -1,5 +1,6 @@
 {
 	"tmpDir": ".tense",
+	"beforeCmd": "",
 	"copySources": [],
 	"pause": "never"
 }

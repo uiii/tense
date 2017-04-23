@@ -181,6 +181,24 @@ Consider `tense.yml` is in project's root and `<project-root>/Libs` is a directo
 - `<project-root>/Libs/*` to `<pw-path>/site/modules/Module/Libs`
 - `<project-root>/Module.module` to `<pw-path>/site/modules/Module/Module.module`
 
+### beforeCmd
+> *optional*, config: project, local
+
+Command to execute before a test suite, but after a PW instance is installed and [sources](#copySources) are copied.
+
+This is just a single command, if you need to run multiple commands, put them into an external script.
+
+> Remember, the command should be platform independen, so using `.sh` or `.bat` files are not recommended.
+> Best option is to use PHP as you can see in the [example](https://github.com/uiii/tense/tree/master/example),
+> but you can use any other platform independent scripting language.
+
+> Path to the ProcessWire installation will be in `PW_PATH` environment variable.
+
+*Example:*
+```yaml
+beforeCmd: "composer install"
+```
+
 ### testCmd
 > **required**, config: project
 

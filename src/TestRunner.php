@@ -88,6 +88,7 @@ class TestRunner {
 		try {
 			$processWire->install($processWirePath);
 			$this->copySourceFiles($processWirePath);
+			$this->executeBeforeCmd($processWirePath);
 
 			$testResult = $this->executeTestCmd($processWirePath);
 		} catch (\Exception $e) {
@@ -126,10 +127,25 @@ class TestRunner {
 		}
 	}
 
-	protected function executeTestCmd($processWirePath) {
-		list($cmdExecutable, $args) = preg_split("/\s+/", trim($this->config->testCmd) . " ", 2);
+	protected function executeBeforeCmd($processWirePath) {
+		$this->output->write("<info>Executing before command ... </info>", false, Output::MESSAGE_TEMPORARY);
 
-		$result = Cmd::run($cmdExecutable, preg_split("/\s+/", $args), [
+		$cmd = $this->config->beforeCmd;
+
+		if (! $cmd) {
+			return;
+		}
+
+		Cmd::run($cmd, [], [
+			'cwd' => $this->config->workingDir,
+			'env' => [
+				'PW_PATH' => $processWirePath
+			],
+		]);
+	}
+
+	protected function executeTestCmd($processWirePath) {
+		$result = Cmd::run($this->config->testCmd, [], [
 			'cwd' => $this->config->workingDir,
 			'env' => [
 				'PW_PATH' => $processWirePath

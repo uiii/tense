@@ -56,14 +56,8 @@ abstract class Cmd {
 	];
 
 	public static function run($command, $args = [], $options = [], Output $outputWriter = null) {
+		$command = self::prepareCmd($command, $args);
 		$options = array_merge(self::$defaultOptions, $options);
-
-		if (strpbrk($command, "/\\") !== false) {
-			// command executable is a path, so make it absolute
-			$command = Path::join($options['cwd'] ?: getcwd(), $command);
-		}
-
-		$commandString = sprintf("%s %s 2>&1", $command, implode(' ', $args));
 
 		$descriptorspec = array(
 			1 => array("pipe", "w") // stdout
@@ -74,9 +68,9 @@ abstract class Cmd {
 			$options['env'] = array_merge(self::getEnv(), $options['env']);
 		}
 
-		Log::info(sprintf("Running command: %s", $commandString));
+		Log::info(sprintf("Running command: %s", $command));
 
-		$process = proc_open($commandString, $descriptorspec, $pipes, $options['cwd'], $options['env']);
+		$process = proc_open($command, $descriptorspec, $pipes, $options['cwd'], $options['env']);
 
 		if (! is_resource($process)) {
 			throw new CmdException(null);
@@ -157,5 +151,14 @@ abstract class Cmd {
 		}
 
 		return $env;
+	}
+
+	protected static function prepareCmd($command, $args) {
+		list($command, $commandArgs) = preg_split("/\s+/", $command . " ", 2);
+
+		// fix OS specific directory separators
+		$command = preg_replace("/[\/\\\\]/", DIRECTORY_SEPARATOR, $command);
+
+		return sprintf("%s %s %s 2>&1", $command, $commandArgs, implode(' ', $args));
 	}
 }

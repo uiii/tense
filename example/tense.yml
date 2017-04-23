@@ -3,4 +3,6 @@ testTags:
     - "2.7"
     - "3.0"
 
+beforeCmd: "php tests/before.php"
+
 testCmd: "../vendor/bin/phpunit --bootstrap tests/bootstrap.php --colors tests/ExampleTest.php"
