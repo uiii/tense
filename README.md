@@ -184,11 +184,11 @@ Consider `tense.yml` is in project's root and `<project-root>/Libs` is a directo
 ### beforeCmd
 > *optional*, config: project, local
 
-Command to execute before a test suite, but after a PW instance is installed and [sources](#copySources) are copied.
+Command to execute before a test suite, but after a PW instance is installed and [sources](#copysources) are copied.
 
 This is just a single command, if you need to run multiple commands, put them into an external script.
 
-> Remember, the command should be platform independen, so using `.sh` or `.bat` files are not recommended.
+> Remember, the command should be platform independent, so using `.sh` or `.bat` files are not recommended.
 > Best option is to use PHP as you can see in the [example](https://github.com/uiii/tense/tree/master/example),
 > but you can use any other platform independent scripting language.
 
